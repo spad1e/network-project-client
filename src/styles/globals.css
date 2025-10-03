@@ -12,11 +12,17 @@
   --color-metal: #A69D9D;
   --color-purple-sky: #BEB8E6;
   --color-light-purple-sky: #EEECFF;
+  --color-sea-blue: #005DC8;
+  --color-sky-blue: #339BF1;
+  --color-grass-green: #35C800;
   
 
 }
 @utility text-shadow-red-custom {
   text-shadow: 7px 5px #000000;
+}
+@utility box-shadow-custom {
+   box-shadow: 7px 5px #000000;
 }
 
 
