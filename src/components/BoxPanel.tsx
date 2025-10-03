@@ -18,7 +18,7 @@ export default function BoxPanel({
   activateActionIs = false,
 }: BoxPanelProps) {
   return (
-    <div className="box-shadow-custom flex h-full w-full flex-col overflow-hidden rounded-[16px]">
+    <div className="max-h-100 sm:max-h-200 box-shadow-custom flex h-full w-full flex-col overflow-hidden rounded-[16px]">
       <div
         className={`justify-between bg-${bgColor} flex h-20 items-center border-b-2 border-b-black`}
       >
@@ -35,7 +35,9 @@ export default function BoxPanel({
         )}
       </div>
 
-      <div className="h-full w-full overflow-auto bg-white p-5">{page}</div>
+      <div className="scrollbar-custom-home h-full w-full overflow-auto bg-white p-6">
+        {page}
+      </div>
     </div>
   );
 }

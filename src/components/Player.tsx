@@ -12,14 +12,24 @@ export default function Player() {
       { id: 10, name: "Warrior" },
       { id: 11, name: "Mage" },
       { id: 12, name: "Archer" },
+      { id: 13, name: "Archer" },
+      { id: 14, name: "Warrior" },
+      { id: 15, name: "Mage" },
+      { id: 16, name: "Archer" },
+        { id: 17, name: "Warrior" },
+        { id: 18, name: "Mage" },
+        { id: 19, name: "Archer" },
+        { id: 20, name: "Warrior" },
+        { id: 21, name: "Mage" },
+        { id: 22, name: "Archer" },
     ];
 
     return (
-      <div className="grid grid-cols-4">
+      <div className="grid h-fit grid-cols-4 place-items-center">
         {player.map((p) => (
           <div
             key={p.id}
-            className="m-2 aspect-square h-3/4 max-h-20 rounded-full bg-amber-600"
+            className="m-2 aspect-square h-8 md:h-12 lg:h-16 rounded-full bg-amber-600"
           ></div>
         ))}
       </div>

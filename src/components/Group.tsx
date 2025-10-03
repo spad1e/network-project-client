@@ -15,11 +15,11 @@ export default function Group() {
   ];
 
   return (
-    <div className="grid grid-cols-4">
+    <div className="grid h-fit grid-cols-4 place-items-center">
       {group.map((p) => (
         <div
           key={p.id}
-          className="m-2 aspect-square h-3/4 max-h-20 rounded-full bg-amber-600"
+          className="m-2 aspect-square h-8 rounded-full bg-amber-600 md:h-12 lg:h-16"
         ></div>
       ))}
     </div>

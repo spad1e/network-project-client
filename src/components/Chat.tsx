@@ -11,23 +11,23 @@ export default function Chat(){
         { status: "other", id: 8, text: "See you later!", sender: "Bob" },
     ]
     return (
-      <div className="h-full overflow-auto p-4">
+      <div className="h-full">
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${msg.status === "own" ? "justify-end" : msg.status === "other" ? "justify-start" : "justify-center"}`}
+            className={`m-2 flex ${msg.status === "own" ? "justify-end" : msg.status === "other" ? "justify-start" : "justify-center"}`}
           >
-            <div className={`${msg.status === "own" ? "flex-row-reverse" : "flex-row"} flex`}>
+            <div
+              className={`${msg.status === "own" ? "flex-row-reverse" : "flex-row"} flex`}
+            >
               {msg.status !== "event" && (
-                <div className="m-2 aspect-square h-1/4 max-h-20 rounded-full bg-amber-600">
-
-                </div>
+                <div className="m-2 aspect-square h-10 w-10 rounded-full bg-amber-600" />
               )}
               <div
-                className={`h-fit rounded-lg p-4 ${msg.status === "own" ? "bg-lime-400 text-white" : msg.status === "other" ? "bg-gray-300 text-black" : "bg-transparent text-red-400"}`}
+                className={`h-auto rounded-lg p-4 ${msg.status === "own" ? "bg-lime-400 text-white" : msg.status === "other" ? "bg-gray-300 text-black" : "bg-transparent text-red-400"}`}
               >
                 {msg.status !== "event" && (
-                  <div className="mb-2 font-bold">{msg.sender}</div>
+                  <div className="mb-1 text-sm font-bold">{msg.sender}</div>
                 )}
                 <div>{msg.text}</div>
               </div>

@@ -43,4 +43,21 @@
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
     background: #A69D9D;
   }
+
+  
+  .scrollbar-custom-home::-webkit-scrollbar {
+    width: 10px;
+    height: 4px;
+  }
+
+  .scrollbar-custom-home::-webkit-scrollbar-thumb {
+    background: #A69D9D; 
+  }
+
+  .scrollbar-custom-home::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-custom-home::-webkit-scrollbar-thumb:hover {
+    background: #7d6f6f;
+  }
 }
