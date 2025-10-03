@@ -3,4 +3,38 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-primary-blue: #27214F;
+  --color-secondary-blue: #423C7A;
+  --color-old-matcha: #8F9880;
+  --color-cold-metals: #C6C6C6;
+  --color-creamy-white: #F5EDCE;
+  --color-pink-orange: #F99E90;
+  --color-metal: #A69D9D;
+  --color-purple-sky: #BEB8E6;
+  --color-light-purple-sky: #EEECFF;
+  
+
+}
+@utility text-shadow-red-custom {
+  text-shadow: 7px 5px #000000;
+}
+
+
+@layer utilities {
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 1px;
+    height: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: #FFFFFF; 
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: #A69D9D;
+  }
 }
