@@ -1,3 +1,5 @@
+"use client";
+import { redirect } from "next/navigation";
 export default function LoginPanel() {
   const characters = [
     { id: 1, name: "Warrior" },
@@ -47,7 +49,8 @@ export default function LoginPanel() {
       </div>
 
       {/* Create button */}
-      <button className="row-span-2 bg-purple-sky hover:bg-light-purple-sky mx-auto mt-4 h-[72px] w-[281px] rounded-[32px] border-3 border-black text-[32px] font-bold text-black shadow-slate-800 shadow-lg">
+      <button className="row-span-2 bg-purple-sky hover:bg-light-purple-sky mx-auto mt-4 h-[72px] w-[281px] rounded-[32px] border-3 border-black text-[32px] font-bold text-black shadow-slate-800 shadow-lg"
+      onClick={() => redirect("/")}>
         Create
       </button>
     </div>

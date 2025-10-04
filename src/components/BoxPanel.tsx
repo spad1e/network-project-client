@@ -35,7 +35,7 @@ export default function BoxPanel({
         )}
       </div>
 
-      <div className="scrollbar-custom-home h-full w-full overflow-auto bg-white p-6">
+      <div className="scrollbar-custom-home h-full w-full overflow-auto bg-white p-6 transition-all">
         {page}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+"use client";
 import LoginPanel from "@/components/LoginPanel";
 
 export default function LoginPage() {

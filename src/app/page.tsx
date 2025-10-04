@@ -7,17 +7,26 @@ import Chat from "@/components/Chat";
 import { useState } from "react";
 import { ChatBoxType } from "@/type";
 import IdleChat from "@/components/IdleChat";
+// import { cookies } from "next/headers"; // server-side cookies
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
+  
   const [chat, setChat] = useState<ChatBoxType | null>(null);
   const handleSetChat = (p: ChatBoxType) => {
     setChat(p);
   }
+  // const token = cookies().get("token")?.value;
+  // const test = "A"
+  // if (test !== "A") {
+  //   redirect("/login"); // force redirect if no token
+  // }
   return (
     <div className="bg-creamy-white relative min-h-screen w-full">
       {/* Header */}
-      <div className="bg-secondary-blue fixed top-0 left-0 flex h-[70px] w-full items-center px-6 text-2xl font-bold text-white">
-        Spade
+      <div className="bg-secondary-blue fixed top-0 left-0 flex h-[70px] w-full items-center px-6 text-2xl font-bold text-white justify-between">
+        <h1 className="text-shadow-red-custom">Game Network</h1>
+        <h1 className="cursor-pointer hover:text-yellow-300" onClick={() => redirect("/login")}>Logout</h1>
       </div>
 
       {/* Grid panels */}
