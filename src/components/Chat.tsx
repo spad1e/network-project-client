@@ -1,6 +1,8 @@
+import { ChatTextType } from "@/type";
+
 export default function Chat(){
 
-    const messages = [
+    const messages: ChatTextType[] = [
         { status: "own", id: 1, text: "Hello!", sender: "Alice" },
         { status: "other", id: 2, text: "Hi there!", sender: "Bob" },
         { status: "event", id: 3, text: "Alice joined the chat", sender: "System" },
@@ -9,7 +11,10 @@ export default function Chat(){
         { status: "own", id: 6, text: "Great to hear!", sender: "Alice" },
         { status: "event", id: 7, text: "Bob left the chat", sender: "System" },
         { status: "other", id: 8, text: "See you later!", sender: "Bob" },
+        { status: "own", id: 9, text: "Bye!", sender: "Alice" },
+        { status: "event", id: 10, text: "Alice left the chat", sender: "System" },
     ]
+    
     return (
       <div className="h-full">
         {messages.map((msg) => (

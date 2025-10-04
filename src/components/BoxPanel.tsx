@@ -20,14 +20,14 @@ export default function BoxPanel({
   return (
     <div className="max-h-100 sm:max-h-200 box-shadow-custom flex h-full w-full flex-col overflow-hidden rounded-[16px]">
       <div
-        className={`justify-between bg-${bgColor} flex h-20 items-center border-b-2 border-b-black`}
+        className={`bg-${bgColor} flex h-20 items-center border-b-2 border-b-black`}
       >
         <h1 className="mx-10 text-[26px] font-bold text-white">{boxName}</h1>
 
         {/* Render action only if onAction exists */}
         {activateActionIs && (
           <h1
-            className="mx-10 cursor-pointer text-[26px] font-bold text-white transition-colors hover:text-yellow-300"
+            className="mr-5 ml-auto cursor-pointer text-[26px] font-bold text-white transition-colors hover:text-yellow-300"
             onClick={onAction}
           >
             {actionName}

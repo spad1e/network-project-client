@@ -1,4 +1,11 @@
-export default function Group() {
+import { ChatBoxType } from "@/type";
+type GroupProps = {
+  setState: (p: ChatBoxType) => void;
+};
+
+export default function Group({
+  setState,
+}: GroupProps) {
   const group = [
     { id: 1, name: "Warrior" },
     { id: 2, name: "Mage" },
@@ -17,10 +24,11 @@ export default function Group() {
   return (
     <div className="grid h-fit grid-cols-4 place-items-center">
       {group.map((p) => (
-        <div
+        <button
           key={p.id}
-          className="m-2 aspect-square h-8 rounded-full bg-amber-600 md:h-12 lg:h-16"
-        ></div>
+          className="m-2 aspect-square h-8 rounded-full bg-amber-100 transition-colors hover:bg-lime-300 focus:bg-amber-900 md:h-12 lg:h-16"
+          onClick={() => setState(p)}
+        ></button>
       ))}
     </div>
   );

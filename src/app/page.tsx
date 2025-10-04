@@ -4,8 +4,15 @@ import BoxPanel from "@/components/BoxPanel";
 import Player from "@/components/Player";
 import Group from "@/components/Group";
 import Chat from "@/components/Chat";
+import { useState } from "react";
+import { ChatBoxType } from "@/type";
+import IdleChat from "@/components/IdleChat";
 
 export default function HomePage() {
+  const [chat, setChat] = useState<ChatBoxType | null>(null);
+  const handleSetChat = (p: ChatBoxType) => {
+    setChat(p);
+  }
   return (
     <div className="bg-creamy-white relative min-h-screen w-full">
       {/* Header */}
@@ -14,19 +21,19 @@ export default function HomePage() {
       </div>
 
       {/* Grid panels */}
-      <div className="order-1 grid h-full sm:max-h-[calc(100vh)] w-full grid-cols-1 sm:grid-cols-2 grid-rows-3 sm:grid-rows-2 gap-6 p-6 p-[90px]">
+      <div className="order-1 grid h-full w-full grid-cols-1 grid-rows-3 gap-6 p-6 p-[90px] sm:max-h-[calc(100vh)] sm:grid-cols-2 sm:grid-rows-2">
         <div className="row-span-1 h-full">
           <BoxPanel
             boxName="Online Friend"
             bgColor="sea-blue"
-            page={<Player />}
+            page={<Player setState={handleSetChat} />}
           />
         </div>
-        <div className="order-3 sm:order-2 row-span-1 sm:row-span-2 h-full">
-          <BoxPanel 
-            boxName="Chat" 
-            bgColor="grass-green" 
-            page={<Chat/>}
+        <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
+          <BoxPanel
+            boxName={chat ? `Chat - ${chat.name}` : "Chat"}
+            bgColor="grass-green"
+            page={chat ? <Chat/> : <IdleChat />}
             actionName="Left Chat"
             onAction={() => {
               console.log("Test");
@@ -34,11 +41,11 @@ export default function HomePage() {
             activateActionIs={true}
           />
         </div>
-        <div className="order-2 sm:order-3 row-span-1 h-full">
+        <div className="order-2 row-span-1 h-full sm:order-3">
           <BoxPanel
             boxName="Group"
             bgColor="sky-blue"
-            page={<Group />}
+            page={<Group setState={handleSetChat} />}
             actionName="Join Group"
             onAction={() => {
               console.log("Test");
