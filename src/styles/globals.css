@@ -22,11 +22,11 @@
   --color-grass-green: #35C800;
 
 }
-@utility text-shadow-red-custom {
-  text-shadow: 7px 5px #000000;
+@utility text-shadow-custom {
+  text-shadow: 7px 5px 12px #000000;
 }
 @utility box-shadow-custom {
-   box-shadow: 7px 5px #000000;
+   box-shadow: 0px 0px 40px #000000;
 }
 
 @layer utilities {

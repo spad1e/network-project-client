@@ -23,8 +23,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body className="bg-creamy-white h-full">
-        <div className="h-20" />
+      <body className="bg-blue-950 h-full">
+        
         <NavBar />
         <FloatPanelProvider>
           <CurrentChatProvider>

@@ -72,7 +72,7 @@ export function Chat({
   ];
   return (
     <div className="relative h-full">
-      <div className="absolute bottom-10 w-full">
+      <div className="absolute bottom-20 w-full">
         <InputBox
           type_box={"text"}
           handleSubmit={handleSubmit}

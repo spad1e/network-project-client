@@ -24,7 +24,7 @@ export function InputBox<T extends InputType>({
     };
     return (
       <input
-        className="h-10 w-full rounded-2xl border-1 bg-white px-2 text-black opacity-80 focus:opacity-100"
+        className="h-10 w-full rounded-2xl border-1 bg-white/80 px-2 text-black focus:bg-white/100"
         placeholder={type_box === "text" ? "Hello" : undefined}
         type={type_box === "text" ? "text" : "number"}
         value={inputValue as any}

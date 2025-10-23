@@ -39,7 +39,7 @@ export function Private({
         {player.map((p) => (
           <button
             key={p.id}
-            className="m-2 aspect-square h-8 rounded-full bg-amber-100 transition-colors hover:bg-lime-300 focus:bg-amber-900 md:h-12 lg:h-16"
+            className="m-2 aspect-square h-8 rounded-full bg-blue-800 transition-colors hover:bg-blue-900 focus:bg-blue-950 md:h-12 lg:h-16"
             onClick={()=>setState(p)}
           ></button>
         ))}

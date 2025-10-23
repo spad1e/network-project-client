@@ -3,7 +3,7 @@ import {LoginPanel} from "@/components/LoginPanel";
 import {BoxPanel} from "@/components/BoxPanel";
 import {Group} from "@/components/Group";
 import {Chat} from "@/components/Chat";
-import { Private } from "@/components/Player";
+import { Private } from "@/components/Private";
 import { InputGroup } from "@/components/ui/input-group";
 import { useState } from "react";
 import type { ChatBoxType } from "@/types/type";
@@ -64,7 +64,7 @@ export default function HomePage() {
             }
             actionName="Left Chat"
             onAction={() => {
-              console.log("Test");
+              setChat(null);
             }}
             activateActionIs={true}
           />
@@ -73,10 +73,10 @@ export default function HomePage() {
           <BoxPanel
             boxName="Group"
             bgColor="sky-blue"
-            page={<Group setState={handleSetChat} />}
+            page={<Group setState={handleSetChat} currChat={chat?.id ?? null} />}
             actionName="Join Group"
             onAction={() => {
-              showPanel(<JoinGroup/>);
+              showPanel(<JoinGroup />);
               console.log("Test");
               socket.emit("join_group", chat!.id);
             }}

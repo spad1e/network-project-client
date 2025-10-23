@@ -1,10 +1,12 @@
 import type { ChatBoxType } from "@/types/type";
 type GroupProps = {
   setState: (p: ChatBoxType) => void;
+  currChat: number|null;
 };
 
 export function Group({
   setState,
+  currChat
 }: GroupProps) {
   const group = [
     { id: 1, name: "Warrior" },
@@ -26,7 +28,11 @@ export function Group({
       {group.map((p) => (
         <button
           key={p.id}
-          className="m-2 aspect-square h-8 rounded-full bg-amber-100 transition-colors hover:bg-lime-300 focus:bg-amber-900 md:h-12 lg:h-16"
+          className={`m-2 aspect-square h-8 rounded-full transition-all md:h-12 lg:h-16 ${
+            currChat === p.id
+              ? "bg-blue-950 scale-110"
+              : "bg-blue-800 hover:scale-105 hover:bg-blue-900"
+          }`}
           onClick={() => setState(p)}
         ></button>
       ))}
