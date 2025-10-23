@@ -9,7 +9,7 @@ type BoxPanelProps = {
   activateActionIs: boolean;
 };
 
-export default function BoxPanel({
+export function BoxPanel({
   boxName = "Box Panel", // default name
   bgColor = "sea-blue", // default color
   page,
@@ -35,7 +35,7 @@ export default function BoxPanel({
         )}
       </div>
 
-      <div className="scrollbar-custom-home h-full w-full overflow-auto bg-white p-6 transition-all">
+      <div className="scrollbar-custom-home h-full w-full bg-white p-6 transition-all">
         {page}
       </div>
     </div>

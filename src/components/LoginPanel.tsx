@@ -1,6 +1,6 @@
 "use client";
 import { redirect } from "next/navigation";
-export default function LoginPanel() {
+export function LoginPanel() {
   const characters = [
     { id: 1, name: "Warrior" },
     { id: 2, name: "Mage" },

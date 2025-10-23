@@ -1,4 +1,4 @@
-export default function IdleChat() {
+export function IdleChat() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <h1 className="mb-4 text-2xl font-bold text-black">Idle Chat</h1>

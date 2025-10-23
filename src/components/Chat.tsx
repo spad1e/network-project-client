@@ -1,10 +1,25 @@
 "use client";
 
-import type { ChatTextType } from "@/type";
+import type { ChatTextType } from "@/types/type";
 import { useEffect, useState } from "react";
 import { socket } from "@/connections/socket";
+import type { S } from "node_modules/tailwindcss/dist/types-WlZgYgM8.mjs";
+import {InputBox} from "@/components/ui/inputbox";
+import type{ InputType } from "@/types/input";
+import type { InputValue } from "@/types/input";
 
-export default function Chat({ chatId }: { chatId: number }) {
+interface ChatProps{
+  chatId: number;
+  handleSubmit: (inputValue: InputValue<"text">) => void;
+}
+
+export function Chat({ 
+  chatId,
+  handleSubmit
+
+}: ChatProps
+) {
+
   // const [isConnected, setIsConnected] = useState(socket.connected);
   // const [transport, setTransport] = useState<string | null>(null);
   // useEffect(() => {
@@ -56,29 +71,38 @@ export default function Chat({ chatId }: { chatId: number }) {
     { status: "event", id: 10, text: "Alice left the chat", sender: "System" },
   ];
   return (
-    <div className="h-full">
-      {messages.map((msg) => (
-        <div
-          key={msg.id}
-          className={`m-2 flex ${msg.status === "own" ? "justify-end" : msg.status === "other" ? "justify-start" : "justify-center"}`}
-        >
+    <div className="relative h-full">
+      <div className="absolute bottom-10 w-full">
+        <InputBox
+          type_box={"text"}
+          handleSubmit={handleSubmit}
+        />
+      </div>
+      
+      <div className="h-full overflow-auto">
+        {messages.map((msg) => (
           <div
-            className={`${msg.status === "own" ? "flex-row-reverse" : "flex-row"} flex`}
+            key={msg.id}
+            className={`m-2 flex ${msg.status === "own" ? "justify-end" : msg.status === "other" ? "justify-start" : "justify-center"}`}
           >
-            {msg.status !== "event" && (
-              <div className="m-2 aspect-square h-10 w-10 rounded-full bg-amber-600" />
-            )}
             <div
-              className={`h-auto rounded-lg p-4 ${msg.status === "own" ? "bg-lime-400 text-white" : msg.status === "other" ? "bg-gray-300 text-black" : "bg-transparent text-red-400"}`}
+              className={`${msg.status === "own" ? "flex-row-reverse" : "flex-row"} flex`}
             >
               {msg.status !== "event" && (
-                <div className="mb-1 text-sm font-bold">{msg.sender}</div>
+                <div className="m-2 aspect-square h-10 w-10 rounded-full bg-amber-600" />
               )}
-              <div>{msg.text}</div>
+              <div
+                className={`h-auto rounded-lg p-4 ${msg.status === "own" ? "bg-lime-400 text-white" : msg.status === "other" ? "bg-gray-300 text-black" : "bg-transparent text-red-400"}`}
+              >
+                {msg.status !== "event" && (
+                  <div className="mb-1 text-sm font-bold">{msg.sender}</div>
+                )}
+                <div>{msg.text}</div>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

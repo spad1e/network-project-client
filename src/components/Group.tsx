@@ -1,9 +1,9 @@
-import { ChatBoxType } from "@/type";
+import type { ChatBoxType } from "@/types/type";
 type GroupProps = {
   setState: (p: ChatBoxType) => void;
 };
 
-export default function Group({
+export function Group({
   setState,
 }: GroupProps) {
   const group = [

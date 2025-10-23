@@ -1,14 +1,14 @@
-import { ChatBoxType } from "@/type";
-type PlayerProps = {
+import type { ChatBoxType } from "@/types/type";
+type PrivateProps = {
   setState: (p: ChatBoxType) => void;
 };
 
 
 
-export default function Chat({
+export function Private({
   setState,
 
-}: PlayerProps) {
+}: PrivateProps) {
     const player: ChatBoxType[] = [
       { id: 1, name: "Warrior" },
       { id: 2, name: "Mage" },
