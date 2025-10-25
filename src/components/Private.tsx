@@ -1,14 +1,14 @@
-import { ChatBoxType } from "@/type";
-type PlayerProps = {
+import type { ChatBoxType } from "@/types/type";
+type PrivateProps = {
   setState: (p: ChatBoxType) => void;
 };
 
 
 
-export default function Chat({
+export function Private({
   setState,
 
-}: PlayerProps) {
+}: PrivateProps) {
     const player: ChatBoxType[] = [
       { id: 1, name: "Warrior" },
       { id: 2, name: "Mage" },
@@ -39,7 +39,7 @@ export default function Chat({
         {player.map((p) => (
           <button
             key={p.id}
-            className="m-2 aspect-square h-8 rounded-full bg-amber-100 transition-colors hover:bg-lime-300 focus:bg-amber-900 md:h-12 lg:h-16"
+            className="m-2 aspect-square h-8 rounded-full bg-blue-800 transition-colors hover:bg-blue-900 focus:bg-blue-950 md:h-12 lg:h-16"
             onClick={()=>setState(p)}
           ></button>
         ))}
