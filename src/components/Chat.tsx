@@ -2,7 +2,7 @@
 
 import type { ChatTextType } from "@/types/type";
 import { useEffect, useState } from "react";
-import { socket } from "@/connections/socket";
+// import { socket } from "@/connections/socket";
 import type { S } from "node_modules/tailwindcss/dist/types-WlZgYgM8.mjs";
 import { InputBox } from "@/components/ui/inputbox";
 import type { InputType } from "@/types/input";

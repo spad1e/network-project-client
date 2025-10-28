@@ -1,16 +1,16 @@
 "use client";
-import {LoginPanel} from "@/components/LoginPanel";
-import {BoxPanel} from "@/components/BoxPanel";
-import {Group} from "@/components/Group";
-import {Chat} from "@/components/Chat";
+import { LoginPanel } from "@/components/LoginPanel";
+import { BoxPanel } from "@/components/BoxPanel";
+import { Group } from "@/components/Group";
+import { Chat } from "@/components/Chat";
 import { Private } from "@/components/Private";
 import { InputGroup } from "@/components/ui/input-group";
 import { useState } from "react";
 import type { ChatBoxType } from "@/types/type";
-import {IdleChat} from "@/components/IdleChat";
+import { IdleChat } from "@/components/IdleChat";
 // import { cookies } from "next/headers"; // server-side cookies
 import { redirect } from "next/navigation";
-import { socket } from "@/connections/socket";
+// import { socket } from "@/connections/socket";
 import FloatPanel from "@/components/ui/floatpanel";
 import { useFloatPanel } from "@/components/context/FloatPanelProvider";
 import type { InputType } from "@/types/input";
@@ -19,22 +19,20 @@ import { JoinGroup } from "@/components/ui/joingroup";
 // import { InputGroup } from "@/components/ui/input-group";
 
 export default function HomePage() {
-  const {showPanel, hidePanel} = useFloatPanel();
+  const { showPanel, hidePanel } = useFloatPanel();
   const [chat, setChat] = useState<ChatBoxType | null>(null);
   const handleSetChat = (p: ChatBoxType) => {
     setChat(p);
   };
-  const handleSubmit = (inputValue: InputValue<"text"> ) => {
+  const handleSubmit = (inputValue: InputValue<"text">) => {
     console.log(inputValue);
-  }
+  };
   // const token = cookies().get("token")?.value;
   // const test = "A"
   // if (test !== "A") {
   //   redirect("/login"); // force redirect if no token
   // }
-  const component = <h1>
-    Hello
-  </h1>
+  const component = <h1>Hello</h1>;
   return (
     <div className="relative min-h-screen w-full">
       {/* Grid panels */}
@@ -73,12 +71,14 @@ export default function HomePage() {
           <BoxPanel
             boxName="Group"
             bgColor="sky-blue"
-            page={<Group setState={handleSetChat} currChat={chat?.id ?? null} />}
+            page={
+              <Group setState={handleSetChat} currChat={chat?.id ?? null} />
+            }
             actionName="Join Group"
             onAction={() => {
               showPanel(<JoinGroup />);
               console.log("Test");
-              socket.emit("join_group", chat!.id);
+              // socket.emit("join_group", chat!.id);
             }}
             activateActionIs={true}
           />
