@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { NavBar } from "@/components/ui/navbar";
 import { FloatPanelProvider } from "@/components/context/FloatPanelProvider";
 import { CurrentChatProvider } from "@/components/context/CurrentChatProvider";
+import { ManageProvider } from "@/components/context/ManageProvider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -23,13 +24,13 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body className="h-full">
-        <NavBar />
-        <FloatPanelProvider>
-          <CurrentChatProvider>{children}</CurrentChatProvider>
-        </FloatPanelProvider>
-
-        <NavBar />
+      <body className="h-full pt-20">
+        <ManageProvider>
+          <FloatPanelProvider>
+            <CurrentChatProvider>{children}</CurrentChatProvider>
+            <NavBar />
+          </FloatPanelProvider>
+        </ManageProvider>
       </body>
     </html>
   );

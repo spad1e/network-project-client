@@ -90,7 +90,8 @@ function MainComp({ username }: UsernameProps) {
 
     const admin = username || "Anon";
     try {
-      const created = await createGroup(trimmed, admin);
+      console.log(admin, trimmed);
+      const created = await createGroup(trimmed);
       if (activeGroup !== null) socket.emit("leave_group", activeGroup.id);
       setActiveGroup(created);
       socket.emit("join_group", created.id);

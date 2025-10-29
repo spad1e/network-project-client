@@ -64,3 +64,10 @@ export const leaveGroup = async (
   );
   return response.data;
 };
+export const getUserByToken = async () : Promise<IUser> => {
+  const response = await apiClient.get<IUser>(
+    '/user/token'
+  )
+  console.log(response.data)
+  return response.data;
+}

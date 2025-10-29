@@ -1,5 +1,4 @@
 "use client";
-import { LoginPanel } from "@/components/LoginPanel";
 import { BoxPanel } from "@/components/BoxPanel";
 import { Group } from "@/components/Group";
 import { Chat } from "@/components/Chat";
@@ -16,16 +15,18 @@ import { useFloatPanel } from "@/components/context/FloatPanelProvider";
 import type { InputType } from "@/types/input";
 import type { InputValue } from "@/types/input";
 import { JoinGroup } from "@/components/ui/joingroup";
+import type { IGroup } from "@/types/group";
 // import { InputGroup } from "@/components/ui/input-group";
 
 export default function HomePage() {
   const { showPanel, hidePanel } = useFloatPanel();
-  const [chat, setChat] = useState<ChatBoxType | null>(null);
-  const handleSetChat = (p: ChatBoxType) => {
+  const [chat, setChat] = useState<IGroup | null>(null);
+  const handleSetChat = (p: IGroup) => {
     setChat(p);
   };
-  const handleSubmit = (inputValue: InputValue<"text">) => {
+  const handleSubmit = (inputValue: InputValue<"text">): Promise<void> => {
     console.log(inputValue);
+    return Promise.resolve();
   };
   // const token = cookies().get("token")?.value;
   // const test = "A"
@@ -37,7 +38,7 @@ export default function HomePage() {
     <div className="relative min-h-screen w-full">
       {/* Grid panels */}
       <div className="order-1 grid h-full w-full grid-cols-1 grid-rows-3 gap-6 p-6 sm:max-h-[calc(100vh)] sm:grid-cols-2 sm:grid-rows-2">
-        <div className="row-span-1 h-full">
+        {/* <div className="row-span-1 h-full">
           <BoxPanel
             boxName="Online Friend"
             bgColor="sea-blue"
@@ -48,14 +49,14 @@ export default function HomePage() {
             }}
             activateActionIs={false}
           />
-        </div>
+        </div> */}
         <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
           <BoxPanel
             boxName={chat ? `Chat - ${chat.name}` : "Chat"}
             bgColor="grass-green"
             page={
               chat ? (
-                <Chat chatId={chat.id} handleSubmit={handleSubmit} />
+                <Chat chat={chat} handleSubmit={handleSubmit} />
               ) : (
                 <IdleChat />
               )

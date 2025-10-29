@@ -1,10 +1,10 @@
 "use client";
-import { LoginPanel } from "@/components/LoginPanel";
+import { RegisterPanel } from "@/components/RegisterPanel";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="from-dark-blue via-primary-blue to-secondary-blue mt-10 flex h-screen w-full content-center justify-center bg-gradient-to-b">
-      <LoginPanel />
+      <RegisterPanel />
     </div>
   );
 }

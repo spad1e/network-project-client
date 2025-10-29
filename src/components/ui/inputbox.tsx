@@ -6,7 +6,7 @@ import type { InputValue } from "@/types/input";
 
 interface InputBoxProps<T extends InputType> {
   type_box: T;
-  handleSubmit: (inputValue: InputValue<T>) => void;
+  handleSubmit: (inputValue: InputValue<T>)=> Promise<void>;
 }
 
 export function InputBox<T extends InputType>({
@@ -15,7 +15,7 @@ export function InputBox<T extends InputType>({
 }: InputBoxProps<T>){
 
     const [inputValue, setInputValue] = useState<InputValue<T>>(
-      (type_box === "text" ? "" : null) as InputValue<T>
+      (type_box === "text" ? "" : "") as InputValue<T>
     );
     
     const handleChange = (text: string) => {
@@ -40,7 +40,7 @@ export function InputBox<T extends InputType>({
             if (type_box === "number" && inputValue) {
               handleSubmit(inputValue);
             }
-            setInputValue((type_box === "text" ? "" : null) as InputValue<T>);
+            setInputValue((type_box === "text" ? "" : "") as InputValue<T>);
           }
         }}
       />

@@ -3,14 +3,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { User } from "lucide-react";
 import { Lock } from "lucide-react";
-import { signIn } from "@/lib/auth";
-import { useManage } from "./context/ManageProvider";
-export function LoginPanel() {
+import { signUp } from "@/lib/auth";
+export function RegisterPanel() {
   const router = useRouter();
+  const [select, setSelect] = useState<number|null>(null);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [select, setSelect] = useState<number|null>(null);
-  const {memUsername} = useManage();
+
   const characters = [
     { id: 1, name: "Warrior" },
     { id: 2, name: "Mage" },
@@ -35,10 +34,11 @@ export function LoginPanel() {
   ];
 
   return (
-    <div className="bg-secondary-blue border-purple-sky mx-auto box-border flex h-[560px] w-11/12 max-w-3xl grid-cols-1 grid-rows-7 flex-col items-center justify-center gap-4 rounded-[40px] border-4 p-10">
+    <div className="bg-secondary-blue border-purple-sky mx-auto box-border flex h-[700px] w-11/12 max-w-3xl grid-cols-1 grid-rows-9 flex-col items-center justify-center gap-4 rounded-[40px] border-4 p-10">
       <h2 className="text-shadow-red-custom row-span-1 text-center text-6xl font-bold text-white">
-        Network
+        Create Character
       </h2>
+      {/* Username */}
 
       <div className="row-span-2 mx-auto w-full">
         <h2 className="text-[24px] font-semibold text-white">Username</h2>
@@ -58,7 +58,6 @@ export function LoginPanel() {
           />
         </div>
       </div>
-
       {/* Password */}
       <div className="row-span-2 mx-auto w-full">
         <h2 className="text-[24px] font-semibold text-white">Password</h2>
@@ -79,26 +78,36 @@ export function LoginPanel() {
         </div>
       </div>
 
+      {/* Character list using grid */}
+      <div className="row-span-2 w-full">
+        <h2 className="text-[24px] font-semibold text-white">
+          Choose Your Character
+        </h2>
+        <div className="scrollbar-custom grid w-full grid-flow-col grid-rows-2 gap-4 overflow-auto">
+          {characters.map((char) => (
+            <div
+              key={char.id}
+              className={`row-span-1 mb-4 flex h-24 w-24 flex-shrink-0 flex-col items-center justify-center rounded-3xl transition-all ${select === char.id ? "bg-white/40" : "bg-white/20 hover:bg-white/30"}`}
+              onClick={() => {
+                setSelect(char.id);
+              }}
+            >
+              <div className="aspect-square w-3/4 rounded-full bg-white/80"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Create button */}
       <button
         className="bg-purple-sky/60 hover:bg-purple-sky/80 active:bg-purple-sky row-span-2 mx-auto mt-4 h-[72px] w-[281px] rounded-[28px] text-[32px] font-bold text-black shadow-lg shadow-slate-800 transition-all"
-        onClick={async() => {
-          const data = await signIn({ username, password });
-          memUsername(username);
-          console.log(data);
-          router.push("/");
+        onClick={async () => {
+          await signUp({ username, password });
+          router.push("/login");
         }}
       >
-        Sign In
+        Create
       </button>
-      <div
-        className="flex w-full items-end justify-end px-10 text-sm text-white/70 underline transition-all hover:text-white/80 active:text-white/90"
-        onClick={() => {
-          router.push("/register");
-        }}
-      >
-        <h1>Register</h1>
-      </div>
     </div>
   );
 }

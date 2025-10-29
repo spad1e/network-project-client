@@ -6,11 +6,9 @@ export const fetchGroups = async (): Promise<IGroup[]> => {
   return response.data;
 };
 
-export const fetchGroupByUsername = async (
-  username: string,
-): Promise<IGroup[]> => {
+export const fetchGroupByUsername = async (): Promise<IGroup[]> => {
   try {
-    const response = await apiClient.get<IGroup[]>(`/group/user/${username}`);
+    const response = await apiClient.get<IGroup[]>(`/group/user`);
     return response.data;
   } catch (error) {
     console.error("Error fetching groups by username:", error);
@@ -20,12 +18,14 @@ export const fetchGroupByUsername = async (
 
 export const createGroup = async (
   name: string,
-  adminUsername: string,
 ): Promise<IGroup> => {
-  const response = await apiClient.post<IGroup>("/group", {
-    name,
-    adminUsername,
-  });
+  const response = await apiClient.post<IGroup>(
+    "/group",
+    {
+      name,
+    },
+    { withCredentials: true },
+  );
   return response.data;
 };
 
