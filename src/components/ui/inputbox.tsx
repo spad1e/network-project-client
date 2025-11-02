@@ -6,12 +6,14 @@ import type { InputValue } from "@/types/input";
 
 interface InputBoxProps<T extends InputType> {
   type_box: T;
-  handleSubmit: (inputValue: InputValue<T>)=> Promise<void>;
+  handleSubmit: (inputValue: InputValue<T>) => Promise<void>;
+  Button?: React.ComponentType<{ onClick?: () => void }>;
 }
 
 export function InputBox<T extends InputType>({
     type_box,
-    handleSubmit
+    handleSubmit,
+    Button,
 }: InputBoxProps<T>){
 
     const [inputValue, setInputValue] = useState<InputValue<T>>(
@@ -23,26 +25,37 @@ export function InputBox<T extends InputType>({
 
     };
     return (
-      <input
-        className="h-10 w-full rounded-2xl border-1 bg-white/80 px-2 text-black focus:bg-white/100"
-        placeholder={type_box === "text" ? "Hello" : undefined}
-        type={type_box === "text" ? "text" : "number"}
-        value={inputValue as any}
-        pattern={type_box === "number" ? "[0-9]*" : ""}
-        onChange={(event) => {
-          handleChange(event.target.value);
-        }}
-        onKeyDown={(e) => {
-          if (e.key == "Enter") {
-            if (type_box === "text" && inputValue !== "") {
-              handleSubmit(inputValue);
+      <div className="flex w-full gap-4">
+        <input
+          className="h-10 w-full rounded-2xl border-1 bg-white/80 px-2 text-black focus:bg-white/100"
+          placeholder={type_box === "text" ? "Hello" : undefined}
+          type={type_box === "text" ? "text" : "number"}
+          value={inputValue as any}
+          pattern={type_box === "number" ? "[0-9]*" : ""}
+          onChange={(event) => {
+            handleChange(event.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key == "Enter") {
+              if (type_box === "text" && inputValue !== "") {
+                handleSubmit(inputValue);
+              }
+              if (type_box === "number" && inputValue) {
+                handleSubmit(inputValue);
+              }
+              setInputValue((type_box === "text" ? "" : "") as InputValue<T>);
             }
-            if (type_box === "number" && inputValue) {
-              handleSubmit(inputValue);
-            }
-            setInputValue((type_box === "text" ? "" : "") as InputValue<T>);
-          }
-        }}
-      />
+          }}
+        />
+        {Button && <Button 
+        onClick={() => { 
+          console.log("Test");
+          if (type_box === "text" && inputValue !== "") { 
+            handleSubmit(inputValue); 
+          } if (type_box === "number" && inputValue) { 
+            handleSubmit(inputValue); 
+            } 
+            setInputValue((type_box === "text" ? "" : null) as InputValue<T>); }} />}
+      </div>
     );
 } 

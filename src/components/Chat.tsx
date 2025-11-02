@@ -3,15 +3,15 @@
 import type { ChatTextType } from "@/types/type";
 import { useEffect, useState } from "react";
 // import { socket } from "@/connections/socket";
-import type { S } from "node_modules/tailwindcss/dist/types-WlZgYgM8.mjs";
+import { Send } from "lucide-react";
 import { InputBox } from "@/components/ui/inputbox";
-import type { InputType } from "@/types/input";
 import type { InputValue } from "@/types/input";
 import { fetchChatByGroupId, createChat } from "@/lib/chat";
 import type { IChat } from "@/types/chat";
 import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
 import { socket } from "@/connections/socket";
+import { useRef } from "react";
 interface ChatProps {
   chat: IGroup;
   handleSubmit: (inputValue: InputValue<"text">) => Promise<void>;
@@ -19,33 +19,39 @@ interface ChatProps {
 
 export function Chat({ chat, handleSubmit }: ChatProps) {
   const [message, setMessage] = useState<IChat[]>([]);
-  const {username} = useManage();
+  const { username, readNotification } = useManage();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const handleSubmit2 = async (
     inputValue: InputValue<"text">,
   ): Promise<void> => {
     await handleSubmit(inputValue);
-    console.log("Send")
     const created = await createChat(chat.id, inputValue, username);
     socket.emit("messageToServer", created, chat.id)
     setMessage([...message, created])
   };
+  const SendButton = ({ onClick }: { onClick?: () => void }) => (
+    <Send
+      size={40}
+      onClick={onClick}
+      className="cursor-pointer rounded-lg bg-blue-800 p-2 text-white transition-all hover:bg-blue-900 active:bg-blue-950"
+    />
+  );
 
-  const handleNewMessage = (new_message: IChat) => {
-    console.log("IDK");
-      console.log("New message received:", new_message);
-      setMessage([...message, new_message]);
-    };
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [message])
   useEffect(() => {
     const handleNewMessage = (new_message: IChat) => {
       if (new_message.groupId === chat.id) {
         setMessage((prev) => [...prev, new_message]);
       }
     };
+    readNotification(chat.id);
 
     socket.on("messageToClient", handleNewMessage);
-    console.log("Emmm")
     return () => {
-      console.log("No")
       socket.off("messageToClient", handleNewMessage);
     };
   }, [chat]);
@@ -58,12 +64,20 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
     fetch_chat();
   }, [chat]);
   return (
-    <div className="relative h-full">
-      <div className="absolute bottom-20 w-full">
-        <InputBox type_box={"text"} handleSubmit={handleSubmit2} />
+    <div className="relative h-full w-full overflow-hidden pb-20 bg-white">
+      <div className="absolute bottom-8 flex w-full gap-1 px-10 ">
+        <InputBox
+          type_box={"text"}
+          handleSubmit={handleSubmit2}
+          Button={SendButton}
+        />
       </div>
 
-      <div className="h-full overflow-auto">
+      <div
+        className="scrollbar-custom-home h-full bg-blue-100"
+        ref={scrollRef}
+        style={{ overflowY: "scroll" }}
+      >
         {message.map((msg) => (
           <div
             key={msg.id}
