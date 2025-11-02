@@ -11,33 +11,32 @@ type BoxPanelProps = {
 
 export function BoxPanel({
   boxName = "Box Panel", // default name
-  bgColor = "sea-blue", // default color
+  bgColor = "bg-white", // white background
   page,
   actionName = "Action",
   onAction,
   activateActionIs = false,
 }: BoxPanelProps) {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-[16px] shadow-lg">
-      <div className="bg-sea-blue flex items-center border-b-2 shadow-lg shadow-blue-950">
-        <h1 className="mx-10 flex h-20 items-center text-[26px] font-bold text-white drop-shadow-md">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl shadow-2xl shadow-purple-300/30">
+      {/* Header */}
+      <div
+        className={`bg-white flex items-center justify-between border-b-2 border-purple-300/40 p-6 backdrop-blur-sm`}
+      >
+        <h1 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-2xl font-bold text-transparent drop-shadow-md">
           {boxName}
         </h1>
 
         {/* Render action only if onAction exists */}
         {activateActionIs && (
-          <h1
-            className="mr-5 ml-auto rounded-lg bg-white/20 px-4 py-1 text-sm font-medium transition-all hover:scale-105 hover:bg-white/30 active:bg-white/50"
-            onClick={onAction}
-          >
+          <button className="box-panel-action-button" onClick={onAction}>
             {actionName}
-          </h1>
+          </button>
         )}
       </div>
 
-      <div className="scrollbar-custom-home w-full flex-1 overflow-auto bg-blue-100 transition-all">
-        {page}
-      </div>
+      {/* Content Area */}
+      <div className="box-panel-content">{page}</div>
     </div>
   );
 }

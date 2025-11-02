@@ -3,36 +3,24 @@ import { BoxPanel } from "@/components/BoxPanel";
 import { Group } from "@/components/Group";
 import { Chat } from "@/components/Chat";
 import { Private } from "@/components/Private";
-import { InputGroup } from "@/components/ui/input-group";
 import { useState } from "react";
-import type { ChatBoxType } from "@/types/type";
 import { IdleChat } from "@/components/IdleChat";
-// import { cookies } from "next/headers"; // server-side cookies
-import { redirect } from "next/navigation";
-// import { socket } from "@/connections/socket";
-import FloatPanel from "@/components/ui/floatpanel";
 import { useFloatPanel } from "@/components/context/FloatPanelProvider";
-import type { InputType } from "@/types/input";
 import type { InputValue } from "@/types/input";
 import { JoinGroup } from "@/components/ui/joingroup";
 import type { IGroup } from "@/types/group";
-// import { InputGroup } from "@/components/ui/input-group";
+import { useManage } from "@/components/context/ManageProvider";
 
 export default function HomePage() {
   const { showPanel, hidePanel } = useFloatPanel();
-  const [chat, setChat] = useState<IGroup | null>(null);
+  const {updateCurrChat, currChat} = useManage();
   const handleSetChat = (p: IGroup) => {
-    setChat(p);
+    updateCurrChat(p);
   };
   const handleSubmit = (inputValue: InputValue<"text">): Promise<void> => {
     console.log(inputValue);
     return Promise.resolve();
   };
-  // const token = cookies().get("token")?.value;
-  // const test = "A"
-  // if (test !== "A") {
-  //   redirect("/login"); // force redirect if no token
-  // }
   const component = <h1>Hello</h1>;
   return (
     <div className="relative min-h-screen w-full">
@@ -43,7 +31,10 @@ export default function HomePage() {
             boxName="Online Friend"
             bgColor="sea-blue"
             page={
-              <Private setState={handleSetChat} currChat={chat?.id ?? null} />
+              <Private
+                setState={handleSetChat}
+                currChat={currChat?.id ?? null}
+              />
             }
             actionName="Left Chat"
             onAction={() => {
@@ -54,18 +45,18 @@ export default function HomePage() {
         </div>
         <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
           <BoxPanel
-            boxName={chat ? `Chat - ${chat.name}` : "Chat"}
+            boxName={currChat ? `Chat - ${currChat.name}` : "Chat"}
             bgColor="grass-green"
             page={
-              chat ? (
-                <Chat chat={chat} handleSubmit={handleSubmit} />
+              currChat ? (
+                <Chat chat={currChat} handleSubmit={handleSubmit} />
               ) : (
                 <IdleChat />
               )
             }
             actionName="Left Chat"
             onAction={() => {
-              setChat(null);
+              updateCurrChat(undefined);
             }}
             activateActionIs={true}
           />
@@ -75,7 +66,7 @@ export default function HomePage() {
             boxName="Group"
             bgColor="sky-blue"
             page={
-              <Group setState={handleSetChat} currChat={chat?.id ?? null} />
+              <Group setState={handleSetChat} currChat={currChat?.id ?? null} />
             }
             actionName="Join Group"
             onAction={() => {

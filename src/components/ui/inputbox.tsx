@@ -7,7 +7,7 @@ import type { InputValue } from "@/types/input";
 interface InputBoxProps<T extends InputType> {
   type_box: T;
   handleSubmit: (inputValue: InputValue<T>) => Promise<void>;
-  Button?: React.ComponentType<{ onClick?: () => void }>;
+  Button?: React.ComponentType<{ onClick?: () => void , inputValue? : string}>;
 }
 
 export function InputBox<T extends InputType>({
@@ -47,15 +47,20 @@ export function InputBox<T extends InputType>({
             }
           }}
         />
-        {Button && <Button 
-        onClick={() => { 
-          console.log("Test");
-          if (type_box === "text" && inputValue !== "") { 
-            handleSubmit(inputValue); 
-          } if (type_box === "number" && inputValue) { 
-            handleSubmit(inputValue); 
-            } 
-            setInputValue((type_box === "text" ? "" : null) as InputValue<T>); }} />}
+        {Button && (
+          <Button
+            onClick={() => {
+              if (type_box === "text" && inputValue !== "") {
+                handleSubmit(inputValue);
+              }
+              if (type_box === "number" && inputValue) {
+                handleSubmit(inputValue);
+              }
+              setInputValue((type_box === "text" ? "" : null) as InputValue<T>);
+            }}
+            inputValue={inputValue}
+          />
+        )}
       </div>
     );
 } 

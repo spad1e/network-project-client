@@ -1,5 +1,5 @@
 "use client"
-import { useContext, createContext, useState, useEffect } from "react"
+import { useContext, createContext, useState, useEffect, useRef} from "react"
 import type { IGroup } from "@/types/group";
 import { fetchGroupByUsername } from "@/lib/group";
 import { getUserByToken } from "@/lib/user";
@@ -8,6 +8,7 @@ import type { IChat } from "@/types/chat";
 import { socket } from "@/connections/socket";
 
 interface ManageContextType {
+  groupMap: Map<string, IGroup>;
   group: IGroup[];
   loadGroup: () => Promise<void>;
   getGroup: () => IGroup[];
@@ -15,6 +16,8 @@ interface ManageContextType {
   memUsername: (username: string) => void;
   readNotification: (c: string) => void;
   notification: IChat[];
+  currChat: IGroup | undefined;
+  updateCurrChat: (c: IGroup | undefined) => void;
 }
 
 const ManageContext = createContext<ManageContextType|undefined>(undefined);
@@ -25,16 +28,27 @@ export function ManageProvider({
     children
 }: {children: React.ReactNode}){
     const noti = new Map<string, IChat>;
+    const groupMapRef = useRef(new Map<string, IGroup>());
     const [group, setGroup] = useState<IGroup[]>([]);
     const [username, setUsername] = useState<string>("");
     const [notification, setNotification] = useState<IChat[]>([]);
+    const [currChat, setCurrChat] = useState<IGroup | undefined>(undefined);
     const loadGroup = async() : Promise<void> =>{
         const data = await fetchGroupByUsername();
-        setGroup(data);
+        groupMapRef.current.clear();
+        data.map(item => {
+          groupMapRef.current.set(item.id, item);
+        })
+        setGroup(Array.from(groupMapRef.current.values()));
+
     }
     const getGroup = () : IGroup[] => {
         return group;
     }
+    const updateCurrChat = (c: IGroup | undefined) => {
+      console.log(c);
+      setCurrChat(c);
+    };
     const memUsername = (username: string) : void =>{
         setUsername(username);
     }
@@ -87,13 +101,16 @@ export function ManageProvider({
     return (
       <ManageContext.Provider
         value={{
+          groupMap: groupMapRef.current,
           group,
           loadGroup,
           getGroup,
           username,
           memUsername,
           readNotification,
-          notification
+          notification,
+          updateCurrChat,
+          currChat,
         }}
       >
         {children}

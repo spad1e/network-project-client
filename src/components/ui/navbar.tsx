@@ -1,76 +1,120 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { Gamepad, Bell, User} from "lucide-react";
+import { Gamepad, Bell, User, LogOut, Users } from "lucide-react";
 import { useFloatPanel } from "../context/FloatPanelProvider";
 import { CreateGroup } from "./creategroup";
 import { useState } from "react";
 import { useManage } from "../context/ManageProvider";
+
 export function NavBar() {
-  const {showPanel, hidePanel}= useFloatPanel();
+  const { showPanel, hidePanel } = useFloatPanel();
   const [drop, setDrop] = useState<boolean>(false);
-  const {notification} = useManage();
+  const { notification, username, updateCurrChat, groupMap} = useManage();
   const router = useRouter();
   const pathname = usePathname();
-  
+
   if (pathname !== "/login" && pathname !== "/register")
     return (
       <>
         <div className="h-20" />
-        <div className="bg-secondary-blue fixed top-0 left-0 flex h-[60px] w-full items-center justify-between px-6 text-2xl font-bold text-white">
-          <div className="text-shadow-custom flex items-center gap-3">
-            <Gamepad size={50} className="shadow-2xl" />
-            <h1>Game Network</h1>
+        <div className="fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between border-b-2 border-purple-400/30 bg-gradient-to-r from-purple-900/90 to-blue-900/90 px-8 shadow-2xl shadow-purple-500/20 backdrop-blur-md">
+          {/* Left Section - Logo */}
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
+              <Gamepad size={28} className="text-white" />
+            </div>
+            <div>
+              <h1 className="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-2xl font-bold text-transparent">
+                Network Adventure
+              </h1>
+              {username && (
+                <p className="text-sm text-white/70">Welcome, {username}</p>
+              )}
+            </div>
           </div>
-          <div className="text-shadow-custom flex items-center gap-3">
-            <div className="relative h-full w-fit">
+
+          {/* Right Section - Navigation */}
+          <div className="flex items-center gap-6">
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                className={`nav-icon-button ${drop ? "bg-purple-500/30 text-white" : "hover:bg-white/10"}`}
+                onClick={() => setDrop(!drop)}
+              >
+                <Bell size={24} />
+                {notification.length > 0 && (
+                  <span className="notification-badge">
+                    {notification.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
               {drop && (
-                <div className="absolute top-6 left-4 flex w-40 flex-col rounded-2xl bg-white/70 shadow-lg">
-                  {notification.map((noti) => (
-                    <div
-                      key={noti.id}
-                      className="h-fit w-full border-b-2 border-black px-2 text-lg text-black"
-                    >
-                      <h1 className="font-light">{noti.username}</h1>
-                      <h1 className="font-light">{noti.message}</h1>
-                    </div>
-                  ))}
+                <div className="notification-dropdown">
+                  <div className="notification-header">
+                    <h3 className="text-lg font-semibold text-white">
+                      Notifications
+                    </h3>
+                    <span className="notification-count">
+                      {notification.length} new
+                    </span>
+                  </div>
+
+                  <div className="notification-list">
+                    {notification.length > 0 ? (
+                      notification.map((noti) => (
+                        <div key={noti.id} className="notification-item" 
+                        onClick={() => {
+                          updateCurrChat(groupMap.get(noti.groupId));
+                          setDrop(false);
+                        }}>
+                          <div className="notification-avatar">
+                            <User size={16} />
+                          </div>
+                          <div className="notification-content">
+                            <p className="notification-username">
+                              {noti.username}
+                            </p>
+                            <p className="notification-message">
+                              {noti.message}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="notification-empty">
+                        <Bell size={24} className="text-white/50" />
+                        <p className="text-white/50">No notifications</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
-
-              <Bell
-                size={30}
-                className={`relative mr-5 ml-auto transition-all hover:scale-105 hover:text-white/80 active:text-white/60 ${drop === true ? "scale-120 rounded-full bg-white/40 p-1 text-black" : "scale-100"}`}
-                onClick={() => {
-                  setDrop(!drop);
-                }}
-              />
             </div>
-            <User
-              size={30}
-              className= "relative mr-5 ml-auto transition-all hover:scale-105 hover:text-white/80 active:text-white/60"
-            />
 
-            <h1
-              className="mr-5 ml-auto cursor-pointer rounded-lg bg-white/20 px-4 py-1 text-sm font-medium transition-all hover:scale-105 hover:bg-white/30 active:bg-white/50"
-              onClick={() => {
-                showPanel(<CreateGroup />);
-              }}
+            {/* Create Group Button */}
+            <button
+              className="nav-button-primary"
+              onClick={() => showPanel(<CreateGroup />)}
             >
+              <Users size={20} className="mr-2" />
               Create Group
-            </h1>
-            <h1
-              className="mr-5 ml-auto cursor-pointer rounded-lg bg-white/20 px-4 py-1 text-sm font-medium transition-all hover:scale-105 hover:bg-white/30 active:bg-white/50"
-              onClick={() => {
-                router.push("/login");
-              }}
+            </button>
+
+            {/* Logout Button */}
+            <button
+              className="nav-button-secondary"
+              onClick={() => router.push("/login")}
             >
+              <LogOut size={20} className="mr-2" />
               Logout
-            </h1>
+            </button>
           </div>
         </div>
       </>
     );
 
-  return;
+  return null;
 }
