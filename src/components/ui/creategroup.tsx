@@ -6,12 +6,12 @@ import { useManage } from "../context/ManageProvider";
 import { socket } from "@/connections/socket";
 export function CreateGroup(){
     const {hidePanel}= useFloatPanel();
-    const {loadGroup} = useManage();
+    const {loadGroup, groupMap} = useManage();
     const handleSubmit = async(inputValue: InputValue<"text">): Promise<void> => {
         const group  = await createGroup(inputValue);
         socket.emit("join_group", group.id);
         hidePanel();
-        loadGroup();
+        await loadGroup();
         console.log(group)
     }
     return <div className="h-full grid grid-cols-1 grid-rows-2 relative">

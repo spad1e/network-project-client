@@ -1,113 +1,217 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { User } from "lucide-react";
-import { Lock } from "lucide-react";
+import { User, Lock, Sword, Wand2, Crosshair, Loader } from "lucide-react";
 import { signUp } from "@/lib/auth";
+
 export function RegisterPanel() {
   const router = useRouter();
-  const [select, setSelect] = useState<number|null>(null);
+  const [select, setSelect] = useState<number | null>(null);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const characters = [
-    { id: 1, name: "Warrior" },
-    { id: 2, name: "Mage" },
-    { id: 3, name: "Archer" },
-    { id: 4, name: "Warrior" },
-    { id: 5, name: "Mage" },
-    { id: 6, name: "Archer" },
-    { id: 7, name: "Warrior" },
-    { id: 8, name: "Mage" },
-    { id: 9, name: "Archer" },
-    { id: 10, name: "Warrior" },
-    { id: 11, name: "Mage" },
-    { id: 12, name: "Archer" },
-    { id: 13, name: "Mage" },
-    { id: 14, name: "Archer" },
-    { id: 15, name: "Mage" },
-    { id: 16, name: "Archer" },
-    { id: 17, name: "Mage" },
-    { id: 18, name: "Archer" },
-    { id: 19, name: "Mage" },
-    { id: 20, name: "Archer" },
+    {
+      id: 1,
+      name: "Warrior",
+      icon: Sword,
+      color: "from-red-500 to-orange-500",
+    },
+    { id: 2, name: "Mage", icon: Wand2, color: "from-blue-500 to-purple-500" },
+    {
+      id: 3,
+      name: "Archer",
+      icon: Crosshair,
+      color: "from-green-500 to-teal-500",
+    },
+    {
+      id: 4,
+      name: "Warrior",
+      icon: Sword,
+      color: "from-red-500 to-orange-500",
+    },
+    { id: 5, name: "Mage", icon: Wand2, color: "from-blue-500 to-purple-500" },
+    {
+      id: 6,
+      name: "Archer",
+      icon: Crosshair,
+      color: "from-green-500 to-teal-500",
+    },
+    {
+      id: 7,
+      name: "Warrior",
+      icon: Sword,
+      color: "from-red-500 to-orange-500",
+    },
+    { id: 8, name: "Mage", icon: Wand2, color: "from-blue-500 to-purple-500" },
+    {
+      id: 9,
+      name: "Archer",
+      icon: Crosshair,
+      color: "from-green-500 to-teal-500",
+    },
+    {
+      id: 10,
+      name: "Warrior",
+      icon: Sword,
+      color: "from-red-500 to-orange-500",
+    },
   ];
 
-  return (
-    <div className="bg-secondary-blue border-purple-sky mx-auto box-border flex h-[700px] w-11/12 max-w-3xl grid-cols-1 grid-rows-9 flex-col items-center justify-center gap-4 rounded-[40px] border-4 p-10">
-      <h2 className="text-shadow-red-custom row-span-1 text-center text-6xl font-bold text-white">
-        Create Character
-      </h2>
-      {/* Username */}
+  const handleRegister = async () => {
+    if (!username.trim() || !password.trim()) {
+      setError("Please fill in all fields");
+      return;
+    }
 
-      <div className="row-span-2 mx-auto w-full">
-        <h2 className="text-[24px] font-semibold text-white">Username</h2>
+    if (!select) {
+      setError("Please select a character");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      await signUp({ username, password });
+      router.push("/login");
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="mx-auto flex h-[850px] w-11/12 max-w-5xl flex-col items-center justify-center gap-6 rounded-3xl border-2 border-purple-400/30 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-8 shadow-2xl shadow-purple-500/20">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-5xl font-bold text-transparent drop-shadow-lg">
+          Create Your Account
+        </h2>
+      </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="w-full max-w-md rounded-lg bg-red-500/20 p-3">
+          <p className="text-center text-red-300">{error}</p>
+        </div>
+      )}
+
+      {/* Username Field */}
+      <div className="w-full max-w-md">
+        <label className="mb-2 block text-lg font-medium text-white">
+          Username
+        </label>
         <div className="relative">
           <User
-            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-            size={30}
+            className="absolute top-1/2 left-4 -translate-y-1/2 text-purple-300"
+            size={24}
           />
           <input
             type="text"
-            className="h-12 w-full rounded-3xl border-3 bg-white p-3 px-12 text-[20px] text-gray-400 focus:outline-none"
-            placeholder="Enter your username"
+            className="w-full rounded-2xl border-2 border-purple-300/30 bg-white/10 p-4 pl-12 text-lg text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 focus:outline-none"
+            placeholder="Choose your hero name"
             value={username}
-            onChange={(event) => {
-              setUsername(event.target.value);
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setError("");
             }}
+            disabled={isLoading}
           />
         </div>
       </div>
-      {/* Password */}
-      <div className="row-span-2 mx-auto w-full">
-        <h2 className="text-[24px] font-semibold text-white">Password</h2>
+
+      {/* Password Field */}
+      <div className="w-full max-w-md">
+        <label className="mb-2 block text-lg font-medium text-white">
+          Password
+        </label>
         <div className="relative">
           <Lock
-            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-            size={30}
+            className="absolute top-1/2 left-4 -translate-y-1/2 text-purple-300"
+            size={24}
           />
           <input
             type="password"
-            className="h-12 w-full rounded-3xl border-3 bg-white p-3 px-12 text-[20px] text-gray-400 focus:outline-none"
-            placeholder="Enter your password"
+            className="w-full rounded-2xl border-2 border-purple-300/30 bg-white/10 p-4 pl-12 text-lg text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 focus:outline-none"
+            placeholder="Create your secret code"
             value={password}
-            onChange={(event) => {
-              setPassword(event.target.value);
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError("");
             }}
+            disabled={isLoading}
           />
         </div>
       </div>
 
-      {/* Character list using grid */}
-      <div className="row-span-2 w-full">
-        <h2 className="text-[24px] font-semibold text-white">
-          Choose Your Character
-        </h2>
-        <div className="scrollbar-custom grid w-full grid-flow-col grid-rows-2 gap-4 overflow-auto">
-          {characters.map((char) => (
-            <div
-              key={char.id}
-              className={`row-span-1 mb-4 flex h-24 w-24 flex-shrink-0 flex-col items-center justify-center rounded-3xl transition-all ${select === char.id ? "bg-white/40" : "bg-white/20 hover:bg-white/30"}`}
-              onClick={() => {
-                setSelect(char.id);
-              }}
-            >
-              <div className="aspect-square w-3/4 rounded-full bg-white/80"></div>
-            </div>
-          ))}
+      {/* Character Selection */}
+      <div className="w-full max-w-4xl">
+        <label className="mb-4 block text-center text-2xl font-bold text-white">
+          Choose Your Class
+        </label>
+        <div className="grid grid-cols-5 gap-4">
+          {characters.map((char) => {
+            const IconComponent = char.icon;
+            return (
+              <div
+                key={char.id}
+                className={`character-card group relative cursor-pointer transition-all duration-300 ${
+                  select === char.id
+                    ? "scale-105 border-purple-400 shadow-lg shadow-purple-500/50"
+                    : "hover:scale-102 hover:border-purple-300/50"
+                }`}
+                onClick={() => {
+                  if (!isLoading) {
+                    setSelect(char.id);
+                    setError("");
+                  }
+                }}
+              >
+                <div
+                  className={`character-icon bg-gradient-to-br ${char.color}`}
+                >
+                  <IconComponent size={32} className="text-white" />
+                </div>
+                {select === char.id && (
+                  <div className="selected-indicator">
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Create button */}
+      {/* Create Button */}
       <button
-        className="bg-purple-sky/60 hover:bg-purple-sky/80 active:bg-purple-sky row-span-2 mx-auto mt-4 h-[72px] w-[281px] rounded-[28px] text-[32px] font-bold text-black shadow-lg shadow-slate-800 transition-all"
-        onClick={async () => {
-          await signUp({ username, password });
-          router.push("/login");
-        }}
+        className="mt-6 flex h-16 w-80 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-xl font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-purple-600 hover:to-pink-600 hover:shadow-xl disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-600"
+        onClick={handleRegister}
+        disabled={isLoading}
       >
-        Create
+        {isLoading ? (
+          <>
+            <Loader className="mr-2 animate-spin" size={20} />
+            Creating Account...
+          </>
+        ) : (
+          "Create Hero"
+        )}
       </button>
+
+      {/* Login Link */}
+      <div className="mt-2 text-center">
+        <button
+          className="text-white/70 underline transition-all hover:text-white/90 hover:no-underline"
+          onClick={() => router.push("/login")}
+          disabled={isLoading}
+        >
+          Already have a account? Sign in here
+        </button>
+      </div>
     </div>
   );
 }

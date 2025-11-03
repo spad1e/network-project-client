@@ -1,103 +1,136 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { User } from "lucide-react";
-import { Lock } from "lucide-react";
+import { User, Lock, Loader, Gamepad } from "lucide-react";
 import { signIn } from "@/lib/auth";
 import { useManage } from "./context/ManageProvider";
+
 export function LoginPanel() {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [select, setSelect] = useState<number|null>(null);
-  const {memUsername} = useManage();
-  const characters = [
-    { id: 1, name: "Warrior" },
-    { id: 2, name: "Mage" },
-    { id: 3, name: "Archer" },
-    { id: 4, name: "Warrior" },
-    { id: 5, name: "Mage" },
-    { id: 6, name: "Archer" },
-    { id: 7, name: "Warrior" },
-    { id: 8, name: "Mage" },
-    { id: 9, name: "Archer" },
-    { id: 10, name: "Warrior" },
-    { id: 11, name: "Mage" },
-    { id: 12, name: "Archer" },
-    { id: 13, name: "Mage" },
-    { id: 14, name: "Archer" },
-    { id: 15, name: "Mage" },
-    { id: 16, name: "Archer" },
-    { id: 17, name: "Mage" },
-    { id: 18, name: "Archer" },
-    { id: 19, name: "Mage" },
-    { id: 20, name: "Archer" },
-  ];
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const { memUsername } = useManage();
+
+  const handleLogin = async () => {
+    if (!username.trim() || !password.trim()) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const data = await signIn({ username, password });
+      memUsername(username);
+      console.log(data);
+      router.push("/");
+    } catch (err) {
+      setError("Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="bg-secondary-blue border-purple-sky mx-auto box-border flex h-[560px] w-11/12 max-w-3xl grid-cols-1 grid-rows-7 flex-col items-center justify-center gap-4 rounded-[40px] border-4 p-10">
-      <h2 className="text-shadow-red-custom row-span-1 text-center text-6xl font-bold text-white">
-        Network
-      </h2>
+    <div className="mx-auto flex h-[600px] w-11/12 max-w-4xl flex-col items-center justify-center gap-6 rounded-3xl border-2 border-purple-400/30 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-8 shadow-2xl shadow-purple-500/20">
+      {/* Header */}
+      <div className="flex items-center justify-center gap-2 bg-clip-text text-center text-5xl font-bold text-transparent drop-shadow-lg">
+        <Gamepad
+          size={80}
+          className="bg-clip-text text-5xl font-bold text-transparent text-white drop-shadow-lg"
+        />
+        <h2 className="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-5xl font-bold text-transparent drop-shadow-lg">
+          Network Chat
+        </h2>
+      </div>
 
-      <div className="row-span-2 mx-auto w-full">
-        <h2 className="text-[24px] font-semibold text-white">Username</h2>
+      {/* Error Message */}
+      {error ? (
+        <div className="w-full max-w-md rounded-lg bg-red-500/20 p-3">
+          <p className="text-center text-red-300">{error}</p>
+        </div>
+      ) : (
+        <div className="w-full max-w-md rounded-lg p-3">
+          <p className="text-center text-white">Welcome to Network Chat</p>
+        </div>
+      )}
+
+      {/* Username Field */}
+      <div className="w-full max-w-md">
+        <label className="mb-2 block text-lg font-medium text-white">
+          Username
+        </label>
         <div className="relative">
           <User
-            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-            size={30}
+            className="absolute top-1/2 left-4 -translate-y-1/2 text-purple-300"
+            size={24}
           />
           <input
             type="text"
-            className="h-12 w-full rounded-3xl border-3 bg-white p-3 px-12 text-[20px] text-gray-400 focus:outline-none"
+            className="w-full rounded-2xl border-2 border-purple-300/30 bg-white/10 p-4 pl-12 text-lg text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 focus:outline-none"
             placeholder="Enter your username"
             value={username}
-            onChange={(event) => {
-              setUsername(event.target.value);
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setError("");
             }}
+            disabled={isLoading}
           />
         </div>
       </div>
 
-      {/* Password */}
-      <div className="row-span-2 mx-auto w-full">
-        <h2 className="text-[24px] font-semibold text-white">Password</h2>
+      {/* Password Field */}
+      <div className="w-full max-w-md">
+        <label className="mb-2 block text-lg font-medium text-white">
+          Password
+        </label>
         <div className="relative">
           <Lock
-            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-            size={30}
+            className="absolute top-1/2 left-4 -translate-y-1/2 text-purple-300"
+            size={24}
           />
           <input
             type="password"
-            className="h-12 w-full rounded-3xl border-3 bg-white p-3 px-12 text-[20px] text-gray-400 focus:outline-none"
+            className="w-full rounded-2xl border-2 border-purple-300/30 bg-white/10 p-4 pl-12 text-lg text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 focus:outline-none"
             placeholder="Enter your password"
             value={password}
-            onChange={(event) => {
-              setPassword(event.target.value);
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError("");
             }}
+            disabled={isLoading}
           />
         </div>
       </div>
 
-      {/* Create button */}
+      {/* Login Button */}
       <button
-        className="bg-purple-sky/60 hover:bg-purple-sky/80 active:bg-purple-sky row-span-2 mx-auto mt-4 h-[72px] w-[281px] rounded-[28px] text-[32px] font-bold text-black shadow-lg shadow-slate-800 transition-all"
-        onClick={async() => {
-          const data = await signIn({ username, password });
-          memUsername(username);
-          console.log(data);
-          router.push("/");
-        }}
+        className="mt-4 flex h-16 w-80 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-xl font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-purple-600 hover:to-pink-600 hover:shadow-xl disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-600"
+        onClick={handleLogin}
+        disabled={isLoading}
       >
-        Sign In
+        {isLoading ? (
+          <>
+            <Loader className="mr-2 animate-spin" size={20} />
+            Signing In...
+          </>
+        ) : (
+          "Sign In"
+        )}
       </button>
-      <div
-        className="flex w-full items-end justify-end px-10 text-sm text-white/70 underline transition-all hover:text-white/80 active:text-white/90"
-        onClick={() => {
-          router.push("/register");
-        }}
-      >
-        <h1>Register</h1>
+
+      {/* Register Link */}
+      <div className="mt-2 text-center">
+        <button
+          className="text-white/70 underline transition-all hover:text-white/90 hover:no-underline"
+          onClick={() => router.push("/register")}
+          disabled={isLoading}
+        >
+          Don't have an account? Register here
+        </button>
       </div>
     </div>
   );
