@@ -38,18 +38,20 @@ export default function HomePage() {
     <div className="relative min-h-screen w-full">
       {/* Grid panels */}
       <div className="order-1 grid h-full w-full grid-cols-1 grid-rows-3 gap-6 p-6 sm:max-h-[calc(100vh)] sm:grid-cols-2 sm:grid-rows-2">
-        {/* <div className="row-span-1 h-full">
+        <div className="row-span-1 h-full">
           <BoxPanel
             boxName="Online Friend"
             bgColor="sea-blue"
-            page={<Private setState={handleSetChat} />}
+            page={
+              <Private setState={handleSetChat} currChat={chat?.id ?? null} />
+            }
             actionName="Left Chat"
             onAction={() => {
               console.log("Test");
             }}
             activateActionIs={false}
           />
-        </div> */}
+        </div>
         <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
           <BoxPanel
             boxName={chat ? `Chat - ${chat.name}` : "Chat"}
