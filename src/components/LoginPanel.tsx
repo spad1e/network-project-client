@@ -11,7 +11,6 @@ export function LoginPanel() {
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const { memUsername } = useManage();
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
@@ -24,8 +23,6 @@ export function LoginPanel() {
 
     try {
       const data = await signIn({ username, password });
-      memUsername(username);
-      console.log(data);
       router.push("/");
     } catch (err) {
       setError("Login failed. Please check your credentials.");
@@ -129,7 +126,7 @@ export function LoginPanel() {
           onClick={() => router.push("/register")}
           disabled={isLoading}
         >
-          Don't have an account? Register here
+          Don&apos;t have an account? Register here
         </button>
       </div>
     </div>

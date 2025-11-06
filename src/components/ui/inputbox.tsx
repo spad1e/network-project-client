@@ -30,18 +30,18 @@ export function InputBox<T extends InputType>({
           className="h-10 w-full rounded-2xl border-1 bg-white/80 px-2 text-black focus:bg-white/100"
           placeholder={type_box === "text" ? "Hello" : undefined}
           type={type_box === "text" ? "text" : "number"}
-          value={inputValue as any}
+          value={inputValue}
           pattern={type_box === "number" ? "[0-9]*" : ""}
           onChange={(event) => {
             handleChange(event.target.value);
           }}
-          onKeyDown={(e) => {
+          onKeyDown={async(e) => {
             if (e.key == "Enter") {
               if (type_box === "text" && inputValue !== "") {
-                handleSubmit(inputValue);
+                await handleSubmit(inputValue);
               }
               if (type_box === "number" && inputValue) {
-                handleSubmit(inputValue);
+                await handleSubmit(inputValue);
               }
               setInputValue((type_box === "text" ? "" : "") as InputValue<T>);
             }
@@ -49,12 +49,12 @@ export function InputBox<T extends InputType>({
         />
         {Button && (
           <Button
-            onClick={() => {
+            onClick={async() => {
               if (type_box === "text" && inputValue !== "") {
-                handleSubmit(inputValue);
+                await handleSubmit(inputValue);
               }
               if (type_box === "number" && inputValue) {
-                handleSubmit(inputValue);
+                await handleSubmit(inputValue);
               }
               setInputValue((type_box === "text" ? "" : null) as InputValue<T>);
             }}

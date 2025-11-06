@@ -33,10 +33,12 @@ export function ManageProvider({
     const [username, setUsername] = useState<string>("");
     const [notification, setNotification] = useState<IChat[]>([]);
     const [currChat, setCurrChat] = useState<IGroup | undefined>(undefined);
+    const currChatRef = useRef<IGroup|undefined>(undefined);
     const loadGroup = async() : Promise<void> =>{
         const data = await fetchGroupByUsername();
         groupMapRef.current.clear();
         data.map(item => {
+          socket.emit("join_group", item.id);
           groupMapRef.current.set(item.id, item);
         })
         setGroup(Array.from(groupMapRef.current.values()));
@@ -45,10 +47,12 @@ export function ManageProvider({
     const getGroup = () : IGroup[] => {
         return group;
     }
-    const updateCurrChat = (c: IGroup | undefined) => {
-      console.log(c);
-      setCurrChat(c);
-    };
+   const updateCurrChat = (c: IGroup | undefined) => {
+     currChatRef.current = c;
+     setCurrChat((prev) => {
+       return c;
+     });
+   };
     const memUsername = (username: string) : void =>{
         setUsername(username);
     }
@@ -69,12 +73,13 @@ export function ManageProvider({
     useEffect(() => {
       const handleNotification = (c: IChat): void => {
         noti.set(c.groupId, c);
-        const filter = notification.filter(
-          (item) => item.groupId !== c.groupId,
-        );
-        filter.push(c)
-        console.log(c);
-        setNotification( filter);
+        if (c.groupId !== currChatRef.current?.id) {
+          setNotification((prev) => {
+            const filtered = prev.filter((item) => item.groupId !== c.groupId);
+            return [...filtered, c];
+          });
+        }
+        
         
       };
     
@@ -84,20 +89,23 @@ export function ManageProvider({
       };
     }, []);
     useEffect(() => {
-      const init = async() => {
+      console.log("WHYYY");
+      const init = async() : Promise<void> => {
         try{
-            loadGroup();
+            await loadGroup();
             const data = await getUserByToken();
-            console.log(data)
             memUsername(data.username);
         } catch {
             redirectIfNotAllowed();
         }
 
       }
-      init();
+      init()
+        .catch(
+          (error) => console.error(error)
+        )
 
-    }, [pathname]); 
+    }, []); 
     return (
       <ManageContext.Provider
         value={{

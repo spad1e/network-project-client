@@ -4,15 +4,15 @@ import { createGroup } from "@/lib/group";
 import { useFloatPanel } from "../context/FloatPanelProvider";
 import { useManage } from "../context/ManageProvider";
 import { socket } from "@/connections/socket";
+import { FloatText } from "./floattext";
 export function CreateGroup(){
-    const {hidePanel}= useFloatPanel();
+    const {showPanel,hidePanel}= useFloatPanel();
     const {loadGroup, groupMap} = useManage();
     const handleSubmit = async(inputValue: InputValue<"text">): Promise<void> => {
         const group  = await createGroup(inputValue);
         socket.emit("join_group", group.id);
-        hidePanel();
+        showPanel(<FloatText message={group.id}/>);
         await loadGroup();
-        console.log(group)
     }
     return <div className="h-full grid grid-cols-1 grid-rows-2 relative">
         <h1 className="row-span-1 col-span-1">

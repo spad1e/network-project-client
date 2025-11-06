@@ -14,7 +14,6 @@ export function NavBar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (pathname !== "/login" && pathname !== "/register")
     return (
       <>
         <div className="h-20" />
@@ -65,18 +64,25 @@ export function NavBar() {
                   <div className="notification-list">
                     {notification.length > 0 ? (
                       notification.map((noti) => (
-                        <div key={noti.id} className="notification-item" 
-                        onClick={() => {
-                          updateCurrChat(groupMap.get(noti.groupId));
-                          setDrop(false);
-                        }}>
+                        <div
+                          key={noti.id}
+                          className="notification-item"
+                          onClick={() => {
+                            updateCurrChat(groupMap.get(noti.groupId));
+                            setDrop(false);
+                          }}
+                        >
                           <div className="notification-avatar">
                             <User size={16} />
                           </div>
                           <div className="notification-content">
-                            <p className="notification-username">
-                              {noti.username}
-                            </p>
+                            <div className="flex gap-2 items-end">
+                              <p className="notification-username">
+                                {groupMap.get(noti.groupId)?.name}
+                              </p>
+                              <p className="text-white text-sm">{noti.username}</p>
+                            </div>
+
                             <p className="notification-message">
                               {noti.message}
                             </p>
@@ -116,5 +122,4 @@ export function NavBar() {
       </>
     );
 
-  return null;
 }
