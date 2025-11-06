@@ -29,10 +29,12 @@ export function ManageProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>("");
   const [notification, setNotification] = useState<IChat[]>([]);
   const [currChat, setCurrChat] = useState<IGroup | undefined>(undefined);
+  const currChatRef = useRef<IGroup | undefined>(undefined);
   const loadGroup = async (): Promise<void> => {
     const data = await fetchGroupByUsername();
     groupMapRef.current.clear();
     data.map((item) => {
+      socket.emit("join_group", item.id);
       groupMapRef.current.set(item.id, item);
     });
     setGroup(Array.from(groupMapRef.current.values()));
@@ -41,8 +43,10 @@ export function ManageProvider({ children }: { children: React.ReactNode }) {
     return group;
   };
   const updateCurrChat = (c: IGroup | undefined) => {
-    console.log(c);
-    setCurrChat(c);
+    currChatRef.current = c;
+    setCurrChat((prev) => {
+      return c;
+    });
   };
   const memUsername = (username: string): void => {
     setUsername(username);
@@ -64,10 +68,12 @@ export function ManageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleNotification = (c: IChat): void => {
       noti.set(c.groupId, c);
-      const filter = notification.filter((item) => item.groupId !== c.groupId);
-      filter.push(c);
-      console.log(c);
-      setNotification(filter);
+      if (c.groupId !== currChatRef.current?.id) {
+        setNotification((prev) => {
+          const filtered = prev.filter((item) => item.groupId !== c.groupId);
+          return [...filtered, c];
+        });
+      }
     };
 
     socket.on("messageToClient", handleNotification);
@@ -76,27 +82,18 @@ export function ManageProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
   useEffect(() => {
-    const init = async () => {
+    console.log("WHYYY");
+    const init = async (): Promise<void> => {
       try {
+        await loadGroup();
         const data = await getUserByToken();
-        if (!data) throw new Error("No user data");
         memUsername(data.username);
-
-        if (!socket.connected) {
-          // socket.auth = { token: localStorage.getItem("token") };
-          socket.connect();
-          socket.on("onlineUsers", (users: string[]) => {
-            console.log("Online users:", users);
-          });
-        }
-
-        loadGroup();
       } catch {
         redirectIfNotAllowed();
       }
     };
-    init();
-  }, [pathname]);
+    init().catch((error) => console.error(error));
+  }, []);
   return (
     <ManageContext.Provider
       value={{

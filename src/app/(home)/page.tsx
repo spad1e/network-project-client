@@ -44,7 +44,7 @@ export default function HomePage() {
         </div>
         <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
           <BoxPanel
-            boxName={currChat ? `Chat - ${currChat.name}` : "Chat"}
+            boxName={currChat ? `${currChat.name}` : "Let's Chat"}
             bgColor="grass-green"
             page={
               currChat ? (

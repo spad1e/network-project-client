@@ -8,7 +8,7 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function LoginLayout({
+export default function RegisterLayout({
   children,
 }: {
   children: React.ReactNode;

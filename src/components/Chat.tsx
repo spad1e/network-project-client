@@ -54,6 +54,7 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
 
   useEffect(() => {
     const handleNewMessage = (new_message: IChat) => {
+      console.log(new_message);
       if (new_message.groupId === chat.id) {
         setMessage((prev) => [...prev, new_message]);
       }
@@ -67,11 +68,9 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
   }, [chat]);
 
   useEffect(() => {
-    const fetch_chat = async () => {
-      const fetch_data = await fetchChatByGroupId(chat.id);
-      setMessage(fetch_data);
-    };
-    fetch_chat();
+    fetchChatByGroupId(chat.id)
+      .then((fetch_data) => setMessage(fetch_data))
+      .catch((error) => console.error(error));
   }, [chat]);
 
   return (
