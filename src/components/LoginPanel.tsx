@@ -40,7 +40,7 @@ export function LoginPanel() {
       <div className="flex items-center justify-center gap-2 bg-clip-text text-center text-5xl font-bold text-transparent drop-shadow-lg">
         <Gamepad
           size={80}
-          className="bg-clip-text text-5xl font-bold text-transparent text-white drop-shadow-lg"
+          className="bg-clip-text text-5xl font-bold text-white drop-shadow-lg"
         />
         <h2 className="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-5xl font-bold text-transparent drop-shadow-lg">
           Network Chat

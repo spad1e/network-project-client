@@ -6,7 +6,7 @@ import { signUp } from "@/lib/auth";
 
 export function RegisterPanel() {
   const router = useRouter();
-  const [select, setSelect] = useState<number | null>(null);
+  const [select, setSelect] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -75,7 +75,7 @@ export function RegisterPanel() {
     setError("");
 
     try {
-      await signUp({ username, password });
+      await signUp({ username, icon_id: select, password });
       router.push("/login");
     } catch (err) {
       setError("Registration failed. Please try again.");
@@ -177,8 +177,7 @@ export function RegisterPanel() {
                   <IconComponent size={32} className="text-white" />
                 </div>
                 {select === char.id && (
-                  <div className="selected-indicator">
-                  </div>
+                  <div className="selected-indicator"></div>
                 )}
               </div>
             );

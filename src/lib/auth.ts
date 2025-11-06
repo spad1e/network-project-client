@@ -1,5 +1,6 @@
+import { socket } from "@/connections/socket";
 import { apiClient } from "./axios";
-import type { IUser } from "@/types/user";
+import type { IUserSignIn, IUser } from "@/types/user";
 
 export const signUp = async (data: IUser) => {
   try {
@@ -11,12 +12,24 @@ export const signUp = async (data: IUser) => {
   }
 };
 
-export const signIn = async (data: IUser) => {
+export const signIn = async (data: IUserSignIn) => {
   try {
-    const user = await apiClient.post<IUser>(`/auth/signin`, data);
+    const user = await apiClient.post<IUserSignIn>(`/auth/signin`, data);
+    socket.connect();
     return user;
   } catch (error) {
     console.error("Error SignIn:", error);
+    throw error;
+  }
+};
+
+export const logout = async () => {
+  try {
+    await apiClient.post(`/auth/logout`);
+    console.log("Logging out, disconnecting socket...");
+    socket.disconnect();
+  } catch (error) {
+    console.error("Error Logout:", error);
     throw error;
   }
 };

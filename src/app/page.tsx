@@ -13,7 +13,7 @@ import { useManage } from "@/components/context/ManageProvider";
 
 export default function HomePage() {
   const { showPanel, hidePanel } = useFloatPanel();
-  const {updateCurrChat, currChat} = useManage();
+  const { updateCurrChat, currChat } = useManage();
   const handleSetChat = (p: IGroup) => {
     updateCurrChat(p);
   };
@@ -21,7 +21,6 @@ export default function HomePage() {
     console.log(inputValue);
     return Promise.resolve();
   };
-  const component = <h1>Hello</h1>;
   return (
     <div className="relative min-h-screen w-full">
       {/* Grid panels */}

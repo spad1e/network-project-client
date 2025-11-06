@@ -6,13 +6,19 @@ import { useFloatPanel } from "../context/FloatPanelProvider";
 import { CreateGroup } from "./creategroup";
 import { useState } from "react";
 import { useManage } from "../context/ManageProvider";
+import { logout } from "@/lib/auth";
 
 export function NavBar() {
   const { showPanel, hidePanel } = useFloatPanel();
   const [drop, setDrop] = useState<boolean>(false);
-  const { notification, username, updateCurrChat, groupMap} = useManage();
+  const { notification, username, updateCurrChat, groupMap } = useManage();
   const router = useRouter();
   const pathname = usePathname();
+
+  const logoutCallback = () => {
+    router.push("/login");
+    logout();
+  };
 
   if (pathname !== "/login" && pathname !== "/register")
     return (
@@ -65,11 +71,14 @@ export function NavBar() {
                   <div className="notification-list">
                     {notification.length > 0 ? (
                       notification.map((noti) => (
-                        <div key={noti.id} className="notification-item" 
-                        onClick={() => {
-                          updateCurrChat(groupMap.get(noti.groupId));
-                          setDrop(false);
-                        }}>
+                        <div
+                          key={noti.id}
+                          className="notification-item"
+                          onClick={() => {
+                            updateCurrChat(groupMap.get(noti.groupId));
+                            setDrop(false);
+                          }}
+                        >
                           <div className="notification-avatar">
                             <User size={16} />
                           </div>
@@ -104,10 +113,7 @@ export function NavBar() {
             </button>
 
             {/* Logout Button */}
-            <button
-              className="nav-button-secondary"
-              onClick={() => router.push("/login")}
-            >
+            <button className="nav-button-secondary" onClick={logoutCallback}>
               <LogOut size={20} className="mr-2" />
               Logout
             </button>
