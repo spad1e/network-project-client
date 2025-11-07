@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/axios";
-import type { IGroupChat } from "@/types/groupchat";
+import type { IGroupChat } from "@/types/chat";
 
 export const fetchGroupChatByGroupId = async (
   groupId: string,

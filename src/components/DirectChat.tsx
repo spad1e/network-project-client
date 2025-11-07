@@ -5,20 +5,20 @@ import { useEffect, useState } from "react";
 import { Send, User } from "lucide-react";
 import { InputBox } from "@/components/ui/inputbox";
 import type { InputValue } from "@/types/input";
-import { fetchGroupChatByGroupId, createGroupChat } from "@/lib/groupchat";
-import type { IGroupChat } from "@/types/chat";
-import type { IGroup } from "@/types/group";
+import { fetchDirectChatByUsers, createDirectChat } from "@/lib/directchat";
+import type { IDirectChat } from "@/types/chat";
+import type { IUser } from "@/types/user";
 import { useManage } from "./context/ManageProvider";
 import { socket } from "@/connections/socket";
 import { useRef } from "react";
 
 interface ChatProps {
-  chat: IGroup;
+  receiver: Partial<IUser>;
   handleSubmit: (inputValue: InputValue<"text">) => Promise<void>;
 }
 
-export function Chat({ chat, handleSubmit }: ChatProps) {
-  const [message, setMessage] = useState<IGroupChat[]>([]);
+export function DirectChat({ receiver, handleSubmit }: ChatProps) {
+  const [message, setMessage] = useState<IDirectChat[]>([]);
   const { username, readNotification } = useManage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -26,8 +26,9 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
     inputValue: InputValue<"text">,
   ): Promise<void> => {
     await handleSubmit(inputValue);
-    const created = await createGroupChat(chat.id, inputValue);
-    socket.emit("groupMessageToServer", created, chat.id);
+    if (!receiver.username) return;
+    const created = await createDirectChat(receiver.username, inputValue);
+    socket.emit("directMessageToServer", created, receiver.username);
     setMessage([...message, created]);
   };
 
@@ -53,25 +54,28 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
   }, [message]);
 
   useEffect(() => {
-    const handleNewMessage = (new_message: IGroupChat) => {
+    const handleNewMessage = (new_message: IDirectChat) => {
       console.log(new_message);
-      if (new_message.groupId === chat.id) {
+      if (new_message.sender === receiver!.username) {
+        console.log("called set message");
         setMessage((prev) => [...prev, new_message]);
       }
     };
-    readNotification(chat.id);
+    if (!receiver.username) return;
+    readNotification(receiver.username);
 
-    socket.on("groupMessageToClient", handleNewMessage);
+    socket.on("directMessageToClient", handleNewMessage);
     return () => {
-      socket.off("groupMessageToClient", handleNewMessage);
+      socket.off("directMessageToClient", handleNewMessage);
     };
-  }, [chat]);
+  }, [receiver]);
 
   useEffect(() => {
-    fetchGroupChatByGroupId(chat.id)
+    if (!receiver.username) return;
+    fetchDirectChatByUsers(receiver!.username)
       .then((fetch_data) => setMessage(fetch_data))
       .catch((error) => console.error(error));
-  }, [chat]);
+  }, [receiver]);
 
   return (
     <div className="chat-container">
@@ -80,10 +84,10 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
         {message.map((msg) => (
           <div
             key={msg.id}
-            className={`chat-message-wrapper ${msg.username === username ? "justify-end" : "justify-start"}`}
+            className={`chat-message-wrapper ${msg.sender === username ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`chat-message-content ${msg.username === username ? "flex-row-reverse" : "flex-row"}`}
+              className={`chat-message-content ${msg.sender === username ? "flex-row-reverse" : "flex-row"}`}
             >
               {/* User Avatar */}
               <div className="chat-user-avatar">
@@ -92,9 +96,9 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
 
               {/* Message Bubble */}
               <div
-                className={`chat-message-bubble ${msg.username === username ? "own-message" : "other-message"}`}
+                className={`chat-message-bubble ${msg.sender === username ? "own-message" : "other-message"}`}
               >
-                <div className="chat-username">{msg.username}</div>
+                <div className="chat-username">{msg.sender}</div>
                 <div className="chat-text">{msg.message}</div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 import { BoxPanel } from "@/components/BoxPanel";
 import { Group } from "@/components/Group";
 import { Chat } from "@/components/Chat";
+import { DirectChat } from "@/components/DirectChat";
 import { Private } from "@/components/Private";
 import { useState } from "react";
 import { IdleChat } from "@/components/IdleChat";
@@ -9,13 +10,18 @@ import { useFloatPanel } from "@/components/context/FloatPanelProvider";
 import type { InputValue } from "@/types/input";
 import { JoinGroup } from "@/components/ui/joingroup";
 import type { IGroup } from "@/types/group";
+import type { IUser } from "@/types/user";
 import { useManage } from "@/components/context/ManageProvider";
 
 export default function HomePage() {
   const { showPanel, hidePanel } = useFloatPanel();
   const { updateCurrChat, currChat } = useManage();
+  const { updateCurrReceiver, currReceiver } = useManage();
   const handleSetChat = (p: IGroup) => {
     updateCurrChat(p);
+  };
+  const handleSetDirectChat = (p: Partial<IUser>) => {
+    updateCurrReceiver(p);
   };
   const handleSubmit = (inputValue: InputValue<"text">): Promise<void> => {
     console.log(inputValue);
@@ -29,12 +35,7 @@ export default function HomePage() {
           <BoxPanel
             boxName="Online Friend"
             bgColor="sea-blue"
-            page={
-              <Private
-                setState={handleSetChat}
-                currChat={currChat?.id ?? null}
-              />
-            }
+            page={<Private setState={handleSetDirectChat} />}
             actionName="Left Chat"
             onAction={() => {
               console.log("Test");
@@ -45,6 +46,8 @@ export default function HomePage() {
         <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
           <BoxPanel
             boxName={currChat ? `${currChat.name}` : "Let's Chat"}
+            boxSubtitle={`${currChat ? currChat.id : ""}`}
+            displaySubtitle={currChat ? true : false}
             bgColor="grass-green"
             page={
               currChat ? (
@@ -56,6 +59,27 @@ export default function HomePage() {
             actionName="Left Chat"
             onAction={() => {
               updateCurrChat(undefined);
+            }}
+            activateActionIs={true}
+          />
+        </div>
+        <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
+          <BoxPanel
+            boxName={currReceiver ? `${currReceiver.username}` : "Let's Chat"}
+            bgColor="grass-green"
+            page={
+              currReceiver ? (
+                <DirectChat
+                  receiver={currReceiver}
+                  handleSubmit={handleSubmit}
+                />
+              ) : (
+                <IdleChat />
+              )
+            }
+            actionName="Left Chat"
+            onAction={() => {
+              updateCurrReceiver(undefined);
             }}
             activateActionIs={true}
           />
