@@ -20,3 +20,11 @@ export const signIn = async (data: IUser) => {
     throw error;
   }
 };
+export const logout = async () => {
+  try {
+    await apiClient.post(`/auth/logout`);
+  } catch (error) {
+    console.error("Error Logout:", error);
+    throw error;
+  }
+};

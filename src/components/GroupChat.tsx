@@ -9,7 +9,7 @@ import { fetchGroupChatByGroupId, createGroupChat } from "@/lib/chat";
 import type { IGroupChat } from "@/types/chat";
 import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
-import { connectSocket, getSocket } from "@/connections/socket";
+import { socket } from "@/connections/socket";
 import { useRef } from "react";
 
 interface ChatProps {
@@ -21,10 +21,10 @@ export function GroupChat({ chat, handleSubmit }: ChatProps) {
   const [message, setMessage] = useState<IGroupChat[]>([]);
   const { username } = useManage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const socket = getSocket();
-  if (!socket.connected) {
-    connectSocket();
-  }
+  // const socket = getSocket();
+  // if (!socket.connected) {
+  //   connectSocket();
+  // }
 
   const handleSubmit2 = async (
     inputValue: InputValue<"text">,
@@ -58,7 +58,6 @@ export function GroupChat({ chat, handleSubmit }: ChatProps) {
 
   useEffect(() => {
     const handleNewMessage = (new_message: IGroupChat) => {
-      console.log(new_message);
       if (new_message.groupId === chat.id) {
         setMessage((prev) => [...prev, new_message]);
       }

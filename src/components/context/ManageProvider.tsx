@@ -4,7 +4,7 @@ import type { IGroup } from "@/types/group";
 import { fetchGroupByUsername } from "@/lib/group";
 import { getUserByToken } from "@/lib/user";
 import { usePathname, useRouter } from "next/navigation";
-import { connectSocket, getSocket } from "@/connections/socket";
+import { socket } from "@/connections/socket";
 import type { IUser } from "@/types/user";
 import type { ICurrChat } from "@/types/chat";
 
@@ -30,16 +30,16 @@ export function ManageProvider({
     const [username, setUsername] = useState<string>("");
     const usernameRef = useRef<string>("");
     const currChatRef = useRef<ICurrChat | undefined>(undefined);
-    const socket = getSocket();
-    if(!socket.connected){
-      connectSocket();
-    }
+    // const socket = getSocket();
+    // if(!socket.connected){
+    //   connectSocket();
+    // }
     const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
     const loadGroup = async() : Promise<void> =>{
         const data = await fetchGroupByUsername();
         groupMapRef.current.clear();
         data.map(item => {
-          socket.emit("join_group", item.id);
+          socket.emit("joinGroup", item.id);
           groupMapRef.current.set(item.id, item);
         })
         setGroup(Array.from(groupMapRef.current.values()));
@@ -61,39 +61,37 @@ export function ManageProvider({
         router.push("/login");
       }
     };
-    useEffect(() => {
+     useEffect(() => {
       const handleOnlineUsers = (users: IUser[]) => {
-        const filtered = users.filter((u) => u.username !== usernameRef.current);
-        console.log(users);
+        const filtered = users.filter(
+          (u) => u.username !== usernameRef.current,
+        );
 
-        setOnlineUsers(users);
-      }
-      console.log("Setting up online users listener");
-      console.log(socket.id);
-      socket.on("onlineUsers", handleOnlineUsers);
-      return () => {
-        socket.off("onlineUsers", handleOnlineUsers);
+        setOnlineUsers(filtered);
       };
-    }, []);
-    
-
-    useEffect(() => {
-      const init = async() : Promise<void> => {
-        try{
-            await loadGroup();
-            const data = await getUserByToken();
-            memUsername(data.username);
+      const init = async (): Promise<void> => {
+        try {
+          await loadGroup();
+          const data = await getUserByToken();
+          memUsername(data.username);
         } catch {
-            redirectIfNotAllowed();
+          redirectIfNotAllowed();
         }
-
-      }
+      };
       init()
+        .then(() => {
+          if (socket.connected) return;
+          socket.on("onlineUsers", handleOnlineUsers);
+          socket.connect();
+          return () => {
+              socket.disconnect();
+            };
+          })
         .catch(
           (error) => console.error(error)
-        )
+        );
+    }, []);
 
-    }, []); 
 
     return (
       <ManageContext.Provider

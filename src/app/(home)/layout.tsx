@@ -30,15 +30,16 @@ export default function RootLayout({
     <html lang="en" className={geist.className}>
       <body className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 pt-20">
         <ManageProvider>
-          <RealtimeNotificationProvider>
             <FloatPanelProvider>
               <CurrentChatProvider>
+                 <RealtimeNotificationProvider>
                 {children}
-                <NavBar />
+                <NavBar /> 
                 <ToastNotification />
+                </RealtimeNotificationProvider>
               </CurrentChatProvider>
             </FloatPanelProvider>
-          </RealtimeNotificationProvider>
+         
         </ManageProvider>
       </body>
     </html>

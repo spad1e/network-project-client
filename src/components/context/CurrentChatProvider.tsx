@@ -6,6 +6,7 @@ import type { ICurrChat } from "@/types/chat";
 
 interface CurrentChatContextType {
   currChat: ICurrChat | undefined;
+  currChatRef: React.MutableRefObject<ICurrChat | undefined>;
   updateCurrChat: (c: ICurrChat | undefined) => void;
 }
 
@@ -29,7 +30,7 @@ export function CurrentChatProvider({
       });
     };
     return (
-    <CurrentChatContext.Provider value={{currChat, updateCurrChat}}>
+    <CurrentChatContext.Provider value={{currChat, updateCurrChat, currChatRef}}>
         {children}
     </CurrentChatContext.Provider>
     );

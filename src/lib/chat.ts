@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/axios";
-import type { IGroupChat } from "@/types/chat";
+import type { IGroupChat, IDirectChat } from "@/types/chat";
 
 export const fetchGroupChatByGroupId = async (
   groupId: string,
@@ -30,6 +30,25 @@ export const createGroupChat = async (
     message,
     username,
   });
+  return response.data;
+};
+export const createDirectChat = async (
+  receiver: string,
+  message: string,
+): Promise<IDirectChat> => {
+  const response = await apiClient.post<IDirectChat>("/directchat", {
+    receiver,
+    message,
+  });
+  return response.data;
+};
+
+export const fetchDirectChatByUsers = async (
+  username: string,
+): Promise<IDirectChat[]> => {
+  const response = await apiClient.get<IDirectChat[]>(
+    `/directchat/user/${username}`,
+  );
   return response.data;
 };
 

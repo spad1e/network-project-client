@@ -7,6 +7,7 @@ import { CreateGroup } from "./creategroup";
 import { useState } from "react";
 import { useManage } from "../context/ManageProvider";
 import { useRealtimeNotification } from "../context/RealtimeNotificationProvider";
+import { logout } from "@/lib/auth";
 
 export function NavBar() {
   const { showPanel } = useFloatPanel();
@@ -113,7 +114,9 @@ export function NavBar() {
             {/* Logout Button */}
             <button
               className="flex items-center rounded-xl border-2 border-white/30 bg-white/10 px-4 py-2 font-semibold text-white transition-all duration-200 hover:border-white/50 hover:bg-white/20 hover:scale-105"
-              onClick={() => router.push("/login")}
+              onClick={async() => {
+                await logout();
+                router.push("/login")}}
             >
               <LogOut size={20} className="mr-2" />
               Logout

@@ -1,27 +1,41 @@
 "use client";
 import type { IDirectChat, IGroupChat, INotification } from "@/types/chat";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useRef } from "react";
 import { useState, useEffect } from "react";
-import { connectSocket, getSocket } from "@/connections/socket";
+import { socket } from "@/connections/socket";
+import { useCurrentChat } from "./CurrentChatProvider";
 
 interface RealtimeNotificationContextType {
-  notification: INotification[];
-  addNotification: (c: INotification) => void;
-  readNotification: (id: string) => void;
+    map_notification: Map<string, INotification>;
+    notification: INotification[];
+    addNotification: (c: INotification) => void;
+    readNotification: (id: string) => void;
 }
 export const RealtimeNotificationContext = createContext<RealtimeNotificationContextType | undefined>(undefined);
 
 export function RealtimeNotificationProvider({ children }: { children: React.ReactNode }) {
+    const {currChatRef} = useCurrentChat();
     const [notification, setNotification] = useState<INotification[]>([]);
-    const socket = getSocket();
-    if (!socket.connected) {
-        connectSocket();
-    }
+    const map_notificationRef = useRef(new Map<string, INotification>());
+    // const socket = getSocket();
+    // if (!socket.connected) {
+    //     connectSocket();
+    // }
     const addNotification = (c: INotification) => {
         setNotification((prev) => {
         const exists = prev.find((item) => (item.id === c.id && item.type === c.type));
         if (exists) {
             return prev;
+        }
+        if (currChatRef.current?.type === c.type) {
+            if ((c.type == "group" && currChatRef.current?.id === c.groupId) || (c.type == "direct" && currChatRef.current?.id === c.sender)){
+                return prev;
+            }
+        }
+        if(c.groupId ){
+            map_notificationRef.current.set(JSON.stringify({id: c.groupId, type: c.type}), c);
+        }else{
+            map_notificationRef.current.set(JSON.stringify({id: c.sender, type: c.type}), c);
         }
         return [...prev, c];
         });
@@ -56,7 +70,11 @@ export function RealtimeNotificationProvider({ children }: { children: React.Rea
     }, []);
 
     return (
-        <RealtimeNotificationContext.Provider value={{ notification, addNotification, readNotification }}>
+        <RealtimeNotificationContext.Provider value={{ 
+            map_notification: map_notificationRef.current,
+            notification, 
+            addNotification, 
+            readNotification }}>
             {children}
         </RealtimeNotificationContext.Provider>
     );

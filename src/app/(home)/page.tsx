@@ -11,14 +11,30 @@ import { JoinGroup } from "@/components/ui/joingroup";
 import type { IGroup } from "@/types/group";
 import { useManage } from "@/components/context/ManageProvider";
 import { useCurrentChat } from "@/components/context/CurrentChatProvider";
+import { DirecChat } from "@/components/DirectChat";
+import type { ICurrChat } from "@/types/chat";
+import { useRealtimeNotification } from "@/components/context/RealtimeNotificationProvider";
 
 export default function HomePage() {
   const { showPanel } = useFloatPanel();
   const {updateCurrChat, currChat} = useCurrentChat();
+  const {readNotification, map_notification} = useRealtimeNotification();
+
   const handleSubmit = (inputValue: InputValue<"text">): Promise<void> => {
-    console.log(inputValue);
     return Promise.resolve();
   };
+  const handleUpdateCurrChat = (c: ICurrChat | undefined): Promise<void> => {
+    updateCurrChat(c);
+    if(c && map_notification.get(JSON.stringify({id: c.id, type: c.type}))){
+        readNotification(
+          map_notification.get(JSON.stringify({ id: c.id, type: c.type }))!.id,
+        );
+      // }
+      
+    }
+    return Promise.resolve();
+    
+  }
   const component = <h1>Hello</h1>;
   return (
     <div className="relative h-screen w-full">
@@ -30,14 +46,13 @@ export default function HomePage() {
             bgColor="sea-blue"
             page={
               <Private
-                setState={updateCurrChat}
+                setState={handleUpdateCurrChat}
                 currChat={currChat?.id ?? null}
                 type={currChat?.type || ""}
               />
             }
             actionName="Left Chat"
             onAction={() => {
-              console.log("Test");
             }}
             activateActionIs={false}
           />
@@ -47,15 +62,23 @@ export default function HomePage() {
             boxName={currChat ? `${currChat.name}` : "Let's Chat"}
             bgColor="grass-green"
             page={
-              currChat ? (
-                <GroupChat chat={{id: currChat.id, name: currChat.name} as IGroup} handleSubmit={handleSubmit} />
+              currChat && currChat.type == "group" ? (
+                <GroupChat
+                  chat={{ id: currChat.id, name: currChat.name } as IGroup}
+                  handleSubmit={handleSubmit}
+                />
+              ) : currChat && currChat.type == "direct" ? (
+                <DirecChat
+                  chat={{ id: currChat.name, name: currChat.name } as IGroup}
+                  handleSubmit={handleSubmit}
+                />
               ) : (
                 <IdleChat />
               )
             }
             actionName="Left Chat"
             onAction={() => {
-              updateCurrChat(undefined);
+              handleUpdateCurrChat(undefined);
             }}
             activateActionIs={true}
           />
@@ -66,7 +89,7 @@ export default function HomePage() {
             bgColor="sky-blue"
             page={
               <Group
-                setState={updateCurrChat}
+                setState={handleUpdateCurrChat}
                 currChat={currChat?.id ?? null}
                 type={currChat?.type || ""}
               />
@@ -74,7 +97,6 @@ export default function HomePage() {
             actionName="Join Group"
             onAction={() => {
               showPanel(<JoinGroup />);
-              console.log("Test");
               // socket.emit("join_group", chat!.id);
             }}
             activateActionIs={true}

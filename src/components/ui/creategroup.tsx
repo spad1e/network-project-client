@@ -3,18 +3,18 @@ import type { InputValue } from "@/types/input"
 import { createGroup } from "@/lib/group";
 import { useFloatPanel } from "../context/FloatPanelProvider";
 import { useManage } from "../context/ManageProvider";
-import { connectSocket, getSocket } from "@/connections/socket";
+import { socket } from "@/connections/socket";
 import { FloatText } from "./floattext";
 export function CreateGroup(){
-    const socket = getSocket();
-    if (!socket.connected) {
-      connectSocket();
-    }
+    // const socket = getSocket();
+    // if (!socket.connected) {
+    //   connectSocket();
+    // }
     const {showPanel,hidePanel}= useFloatPanel();
     const {loadGroup, groupMap} = useManage();
     const handleSubmit = async(inputValue: InputValue<"text">): Promise<void> => {
         const group  = await createGroup(inputValue);
-        socket.emit("join_group", group.id);
+        socket.emit("joinGroup", group.id);
         showPanel(<FloatText message={group.id}/>);
         await loadGroup();
     }

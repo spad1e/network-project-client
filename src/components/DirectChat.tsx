@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { Send, User } from "lucide-react";
 import { InputBox } from "@/components/ui/inputbox";
 import type { InputValue } from "@/types/input";
-import { fetchGroupChatByGroupId, createGroupChat } from "@/lib/chat";
-import type { IGroupChat } from "@/types/chat";
+import { fetchDirectChatByUsers, createDirectChat } from "@/lib/chat";
+import type { IDirectChat } from "@/types/chat";
 import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
-import { connectSocket, getSocket } from "@/connections/socket";
 import { useRef } from "react";
+import { socket } from "@/connections/socket";
 
 interface ChatProps {
   chat: IGroup;
@@ -18,20 +18,15 @@ interface ChatProps {
 }
 
 export function DirecChat({ chat, handleSubmit }: ChatProps) {
-  const [message, setMessage] = useState<IGroupChat[]>([]);
+  const [message, setMessage] = useState<IDirectChat[]>([]);
   const { username } = useManage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const socket = getSocket();
-  if (!socket.connected) {
-    connectSocket();
-  }
-
   const handleSubmit2 = async (
     inputValue: InputValue<"text">,
   ): Promise<void> => {
     await handleSubmit(inputValue);
-    const created = await createGroupChat(chat.id, inputValue, username);
-    socket.emit("groupMessageToServer", created, chat.id);
+    const created = await createDirectChat(chat.id, inputValue);
+    socket.emit("directMessageToServer", created, chat.id);
     setMessage([...message, created]);
   };
 
@@ -57,21 +52,20 @@ export function DirecChat({ chat, handleSubmit }: ChatProps) {
   }, [message]);
 
   useEffect(() => {
-    const handleNewMessage = (new_message: IGroupChat) => {
-      console.log(new_message);
-      if (new_message.groupId === chat.id) {
+    const handleNewMessage = (new_message: IDirectChat) => {
+      if (new_message.sender === chat.id) {
         setMessage((prev) => [...prev, new_message]);
       }
     };
 
-    socket.on("groupMessageToClient", handleNewMessage);
+    socket.on("directMessageToClient", handleNewMessage);
     return () => {
-      socket.off("groupMessageToClient", handleNewMessage);
+      socket.off("directMessageToClient", handleNewMessage);
     };
   }, [chat]);
 
   useEffect(() => {
-    fetchGroupChatByGroupId(chat.id)
+    fetchDirectChatByUsers(chat.id)
       .then((fetch_data) => setMessage(fetch_data))
       .catch((error) => console.error(error));
   }, [chat]);
@@ -83,10 +77,10 @@ export function DirecChat({ chat, handleSubmit }: ChatProps) {
         {message.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-4 flex ${msg.username === username ? "justify-end" : "justify-start"}`}
+            className={`mb-4 flex ${msg.receiver === username ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`flex max-w-[70%] items-start gap-3 ${msg.username === username ? "flex-row-reverse" : "flex-row"}`}
+              className={`flex max-w-[70%] items-start gap-3 ${msg.receiver === username ? "flex-row-reverse" : "flex-row"}`}
             >
               {/* User Avatar */}
               <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
@@ -95,12 +89,10 @@ export function DirecChat({ chat, handleSubmit }: ChatProps) {
 
               {/* Message Bubble */}
               <div
-                className={`rounded-2xl p-4 shadow-sm ${msg.username === username ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" : "border border-gray-200 bg-white text-gray-800"}`}
+                className={`rounded-2xl p-4 shadow-sm ${msg.receiver === username ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" : "border border-gray-200 bg-white text-gray-800"}`}
               >
-                <div className="mb-1 text-sm font-semibold">{msg.username}</div>
-                <div className="text-base">
-                  {msg.message}
-                </div>
+                <div className="mb-1 text-sm font-semibold">{msg.receiver}</div>
+                <div className="text-base">{msg.message}</div>
               </div>
             </div>
           </div>
