@@ -188,51 +188,13 @@
 }
 
 
-.character-card {
-  @apply flex flex-col items-center gap-3 rounded-2xl border-2 border-purple-300/30 bg-white/5 p-4 backdrop-blur-sm;
-}
 
-.character-icon {
-  @apply flex h-16 w-16 items-center justify-center rounded-full shadow-lg;
-}
-
-.character-name {
-  @apply text-lg font-semibold text-white;
-}
-
-.selected-indicator {
-  @apply absolute -top-2 -right-2;
-}
-
-.selected-dot {
-  @apply h-4 w-4 rounded-full bg-green-400 shadow-lg;
-}
 
 .hover\:scale-102:hover {
   transform: scale(1.02);
 }
 
-/* Navbar Component Styles */
-.nav-icon-button {
-  @apply relative flex h-10 w-10 items-center justify-center rounded-xl text-white/80 transition-all duration-200 hover:text-white hover:scale-105;
-}
-
-.nav-button-primary {
-  @apply flex items-center rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 font-semibold text-white transition-all duration-200 hover:from-purple-600 hover:to-pink-600 hover:scale-105 hover:shadow-lg;
-}
-
-.nav-button-secondary {
-  @apply flex items-center rounded-xl border-2 border-white/30 bg-white/10 px-4 py-2 font-semibold text-white transition-all duration-200 hover:border-white/50 hover:bg-white/20 hover:scale-105;
-}
-
-.notification-badge {
-  @apply absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white;
-}
-
-.notification-dropdown {
-  @apply absolute top-12 right-0 w-80 rounded-2xl border-2 border-purple-400/30 bg-gradient-to-br from-purple-900/95 to-blue-900/95 backdrop-blur-lg shadow-2xl shadow-purple-500/30;
-}
-
+/* 
 .notification-header {
   @apply flex items-center justify-between border-b-2 border-purple-400/20 p-4;
 }
@@ -276,7 +238,6 @@
 .box-panel-content {
   @apply w-full flex-1 overflow-auto bg-gradient-to-br from-blue-100 to-purple-100/50 transition-all;
 }
-/* Chat Component Styles */
 .chat-container {
   @apply relative flex h-full w-full flex-col overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50/30;
 }
@@ -325,7 +286,6 @@
   @apply cursor-pointer rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 p-3 text-white transition-all hover:from-purple-600 hover:to-blue-600 hover:scale-105 active:from-purple-700 active:to-blue-700;
 }
 
-/* Custom Scrollbar for Chat */
 .chat-messages-area::-webkit-scrollbar {
   width: 6px;
 }
@@ -342,4 +302,4 @@
 
 .chat-messages-area::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.5);
-}
+} */

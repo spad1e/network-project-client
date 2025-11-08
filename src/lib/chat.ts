@@ -1,27 +1,31 @@
 import { apiClient } from "@/lib/axios";
-import type { IChat } from "@/types/chat";
+import type { IGroupChat } from "@/types/chat";
 
-export const fetchChatByGroupId = async (groupId: string): Promise<IChat[]> => {
-  const response = await apiClient.get<IChat[]>(`/chat/group/${groupId}`);
+export const fetchGroupChatByGroupId = async (
+  groupId: string,
+): Promise<IGroupChat[]> => {
+  const response = await apiClient.get<IGroupChat[]>(
+    `/groupchat/group/${groupId}`,
+  );
   return response.data;
 };
 
-export const fetchAllChats = async (): Promise<IChat[]> => {
-  const response = await apiClient.get<IChat[]>("/chat");
+export const fetchAllGroupChats = async (): Promise<IGroupChat[]> => {
+  const response = await apiClient.get<IGroupChat[]>("/groupchat");
   return response.data;
 };
 
-export const fetchChatById = async (id: string): Promise<IChat> => {
-  const response = await apiClient.get<IChat>(`/chat/${id}`);
+export const fetchGroupChatById = async (id: string): Promise<IGroupChat> => {
+  const response = await apiClient.get<IGroupChat>(`/groupchat/${id}`);
   return response.data;
 };
 
-export const createChat = async (
+export const createGroupChat = async (
   groupId: string,
   message: string,
   username: string,
-): Promise<IChat> => {
-  const response = await apiClient.post<IChat>("/chat", {
+): Promise<IGroupChat> => {
+  const response = await apiClient.post<IGroupChat>("/groupchat", {
     groupId,
     message,
     username,
@@ -29,14 +33,16 @@ export const createChat = async (
   return response.data;
 };
 
-export const updateChat = async (
+export const updateGroupChat = async (
   id: number,
   groupId: number,
-): Promise<IChat> => {
-  const response = await apiClient.put<IChat>(`/chat/${id}`, { groupId });
+): Promise<IGroupChat> => {
+  const response = await apiClient.put<IGroupChat>(`/groupchat/${id}`, {
+    groupId,
+  });
   return response.data;
 };
 
-export const deleteChat = async (id: number): Promise<void> => {
-  await apiClient.delete(`/chat/${id}`);
+export const deleteGroupChat = async (id: number): Promise<void> => {
+  await apiClient.delete(`/groupchat/${id}`);
 };

@@ -3,9 +3,13 @@ import type { InputValue } from "@/types/input"
 import { createGroup } from "@/lib/group";
 import { useFloatPanel } from "../context/FloatPanelProvider";
 import { useManage } from "../context/ManageProvider";
-import { socket } from "@/connections/socket";
+import { connectSocket, getSocket } from "@/connections/socket";
 import { FloatText } from "./floattext";
 export function CreateGroup(){
+    const socket = getSocket();
+    if (!socket.connected) {
+      connectSocket();
+    }
     const {showPanel,hidePanel}= useFloatPanel();
     const {loadGroup, groupMap} = useManage();
     const handleSubmit = async(inputValue: InputValue<"text">): Promise<void> => {

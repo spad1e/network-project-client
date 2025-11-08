@@ -29,14 +29,14 @@ export function BoxPanel({
 
         {/* Render action only if onAction exists */}
         {activateActionIs && (
-          <button className="box-panel-action-button" onClick={onAction}>
+          <button className="rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 font-semibold text-white transition-all duration-200 hover:from-purple-600 hover:to-blue-600 hover:scale-105 hover:shadow-lg active:from-purple-700 active:to-blue-700" onClick={onAction}>
             {actionName}
           </button>
         )}
       </div>
 
       {/* Content Area */}
-      <div className="box-panel-content">{page}</div>
+      <div className="w-full flex-1 overflow-auto bg-gradient-to-br from-blue-100 to-purple-100/50 transition-all">{page}</div>
     </div>
   );
 }

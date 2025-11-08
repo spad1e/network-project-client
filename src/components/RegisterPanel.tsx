@@ -159,7 +159,7 @@ export function RegisterPanel() {
             return (
               <div
                 key={char.id}
-                className={`character-card group relative cursor-pointer transition-all duration-300 ${
+                className={`group relative flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-purple-300/30 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 ${
                   select === char.id
                     ? "scale-105 border-purple-400 shadow-lg shadow-purple-500/50"
                     : "hover:scale-102 hover:border-purple-300/50"
@@ -172,13 +172,12 @@ export function RegisterPanel() {
                 }}
               >
                 <div
-                  className={`character-icon bg-gradient-to-br ${char.color}`}
+                  className={`flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br shadow-lg ${char.color}`}
                 >
                   <IconComponent size={32} className="text-white" />
                 </div>
                 {select === char.id && (
-                  <div className="selected-indicator">
-                  </div>
+                  <div className="absolute -top-2 -right-2"></div>
                 )}
               </div>
             );

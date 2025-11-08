@@ -4,20 +4,18 @@ import type { IGroup } from "@/types/group";
 import { fetchGroupByUsername } from "@/lib/group";
 import { getUserByToken } from "@/lib/user";
 import { usePathname, useRouter } from "next/navigation";
-import type { IChat } from "@/types/chat";
-import { socket } from "@/connections/socket";
+import { connectSocket, getSocket } from "@/connections/socket";
+import type { IUser } from "@/types/user";
+import type { ICurrChat } from "@/types/chat";
 
 interface ManageContextType {
+  onlineUsers: IUser[];
   groupMap: Map<string, IGroup>;
   group: IGroup[];
   loadGroup: () => Promise<void>;
   getGroup: () => IGroup[];
   username: string;
   memUsername: (username: string) => void;
-  readNotification: (c: string) => void;
-  notification: IChat[];
-  currChat: IGroup | undefined;
-  updateCurrChat: (c: IGroup | undefined) => void;
 }
 
 const ManageContext = createContext<ManageContextType|undefined>(undefined);
@@ -27,13 +25,16 @@ const ManageContext = createContext<ManageContextType|undefined>(undefined);
 export function ManageProvider({
     children
 }: {children: React.ReactNode}){
-    const noti = new Map<string, IChat>;
     const groupMapRef = useRef(new Map<string, IGroup>());
     const [group, setGroup] = useState<IGroup[]>([]);
     const [username, setUsername] = useState<string>("");
-    const [notification, setNotification] = useState<IChat[]>([]);
-    const [currChat, setCurrChat] = useState<IGroup | undefined>(undefined);
-    const currChatRef = useRef<IGroup|undefined>(undefined);
+    const usernameRef = useRef<string>("");
+    const currChatRef = useRef<ICurrChat | undefined>(undefined);
+    const socket = getSocket();
+    if(!socket.connected){
+      connectSocket();
+    }
+    const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
     const loadGroup = async() : Promise<void> =>{
         const data = await fetchGroupByUsername();
         groupMapRef.current.clear();
@@ -47,20 +48,11 @@ export function ManageProvider({
     const getGroup = () : IGroup[] => {
         return group;
     }
-   const updateCurrChat = (c: IGroup | undefined) => {
-     currChatRef.current = c;
-     setCurrChat((prev) => {
-       return c;
-     });
-   };
     const memUsername = (username: string) : void =>{
         setUsername(username);
+        usernameRef.current = username;
     }
-    const readNotification = (c: string): void =>{
-      noti.delete(c);
-      const filter = notification.filter((item) => item.groupId !== c);
-      setNotification(filter);
-    }
+
     const pathname = usePathname();
     const router = useRouter();
     const redirectIfNotAllowed = () => {
@@ -69,27 +61,23 @@ export function ManageProvider({
         router.push("/login");
       }
     };
-
     useEffect(() => {
-      const handleNotification = (c: IChat): void => {
-        noti.set(c.groupId, c);
-        if (c.groupId !== currChatRef.current?.id) {
-          setNotification((prev) => {
-            const filtered = prev.filter((item) => item.groupId !== c.groupId);
-            return [...filtered, c];
-          });
-        }
-        
-        
-      };
-    
-      socket.on("messageToClient", handleNotification);
+      const handleOnlineUsers = (users: IUser[]) => {
+        const filtered = users.filter((u) => u.username !== usernameRef.current);
+        console.log(users);
+
+        setOnlineUsers(users);
+      }
+      console.log("Setting up online users listener");
+      console.log(socket.id);
+      socket.on("onlineUsers", handleOnlineUsers);
       return () => {
-        socket.off("messageToClient", handleNotification);
+        socket.off("onlineUsers", handleOnlineUsers);
       };
     }, []);
+    
+
     useEffect(() => {
-      console.log("WHYYY");
       const init = async() : Promise<void> => {
         try{
             await loadGroup();
@@ -106,19 +94,17 @@ export function ManageProvider({
         )
 
     }, []); 
+
     return (
       <ManageContext.Provider
         value={{
+          onlineUsers,
           groupMap: groupMapRef.current,
           group,
           loadGroup,
           getGroup,
           username,
           memUsername,
-          readNotification,
-          notification,
-          updateCurrChat,
-          currChat,
         }}
       >
         {children}

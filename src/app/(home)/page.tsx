@@ -1,7 +1,7 @@
 "use client";
 import { BoxPanel } from "@/components/BoxPanel";
 import { Group } from "@/components/Group";
-import { Chat } from "@/components/Chat";
+import { GroupChat } from "@/components/GroupChat";
 import { Private } from "@/components/Private";
 import { useState } from "react";
 import { IdleChat } from "@/components/IdleChat";
@@ -10,20 +10,18 @@ import type { InputValue } from "@/types/input";
 import { JoinGroup } from "@/components/ui/joingroup";
 import type { IGroup } from "@/types/group";
 import { useManage } from "@/components/context/ManageProvider";
+import { useCurrentChat } from "@/components/context/CurrentChatProvider";
 
 export default function HomePage() {
-  const { showPanel, hidePanel } = useFloatPanel();
-  const {updateCurrChat, currChat} = useManage();
-  const handleSetChat = (p: IGroup) => {
-    updateCurrChat(p);
-  };
+  const { showPanel } = useFloatPanel();
+  const {updateCurrChat, currChat} = useCurrentChat();
   const handleSubmit = (inputValue: InputValue<"text">): Promise<void> => {
     console.log(inputValue);
     return Promise.resolve();
   };
   const component = <h1>Hello</h1>;
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative h-screen w-full">
       {/* Grid panels */}
       <div className="order-1 grid h-full w-full grid-cols-1 grid-rows-3 gap-6 p-6 sm:max-h-[calc(100vh)] sm:grid-cols-2 sm:grid-rows-2">
         <div className="row-span-1 h-full">
@@ -32,8 +30,9 @@ export default function HomePage() {
             bgColor="sea-blue"
             page={
               <Private
-                setState={handleSetChat}
+                setState={updateCurrChat}
                 currChat={currChat?.id ?? null}
+                type={currChat?.type || ""}
               />
             }
             actionName="Left Chat"
@@ -49,7 +48,7 @@ export default function HomePage() {
             bgColor="grass-green"
             page={
               currChat ? (
-                <Chat chat={currChat} handleSubmit={handleSubmit} />
+                <GroupChat chat={{id: currChat.id, name: currChat.name} as IGroup} handleSubmit={handleSubmit} />
               ) : (
                 <IdleChat />
               )
@@ -66,7 +65,11 @@ export default function HomePage() {
             boxName="Group"
             bgColor="sky-blue"
             page={
-              <Group setState={handleSetChat} currChat={currChat?.id ?? null} />
+              <Group
+                setState={updateCurrChat}
+                currChat={currChat?.id ?? null}
+                type={currChat?.type || ""}
+              />
             }
             actionName="Join Group"
             onAction={() => {

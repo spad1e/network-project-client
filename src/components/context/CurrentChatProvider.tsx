@@ -1,13 +1,12 @@
 "use client"
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useRef } from "react";
 import type { ChatTextType } from "@/types/type";
-import { create } from "domain";
+import type { IGroup } from "@/types/group";
+import type { ICurrChat } from "@/types/chat";
 
-interface CurrentChatContextType{
-    group_id: number | null;
-    chat: ChatTextType[];
-    selectChat: (group: number) => Promise<void>;
-    getChat: () => ChatTextType[];
+interface CurrentChatContextType {
+  currChat: ICurrChat | undefined;
+  updateCurrChat: (c: ICurrChat | undefined) => void;
 }
 
 const CurrentChatContext = createContext<CurrentChatContextType|undefined>(undefined);
@@ -21,11 +20,16 @@ export function CurrentChatProvider({
         setGroup_id(group);
 
     }
-    const getChat = (): ChatTextType[] => {
-        return chat;
-    }
+    const [currChat, setCurrChat] = useState<ICurrChat | undefined>(undefined);
+    const currChatRef = useRef<ICurrChat | undefined>(undefined);
+    const updateCurrChat = (c: ICurrChat | undefined) => {
+      currChatRef.current = c;
+      setCurrChat((prev) => {
+        return c;
+      });
+    };
     return (
-    <CurrentChatContext.Provider value={{group_id, chat, selectChat, getChat}}>
+    <CurrentChatContext.Provider value={{currChat, updateCurrChat}}>
         {children}
     </CurrentChatContext.Provider>
     );
@@ -34,7 +38,7 @@ export function CurrentChatProvider({
 export function useCurrentChat(){
     const ctx = useContext(CurrentChatContext);
     if(!ctx){
-        throw new Error("useFloatPanel must be used inside FloatPanelProvider");
+        throw new Error("useuseCurrentChat must be used inside CurrentChatProvider");
     }
     return ctx;
 }

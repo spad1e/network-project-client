@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { Send, User } from "lucide-react";
 import { InputBox } from "@/components/ui/inputbox";
 import type { InputValue } from "@/types/input";
-import { fetchChatByGroupId, createChat } from "@/lib/chat";
-import type { IChat } from "@/types/chat";
+import { fetchGroupChatByGroupId, createGroupChat } from "@/lib/chat";
+import type { IGroupChat } from "@/types/chat";
 import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
-import { socket } from "@/connections/socket";
+import { connectSocket, getSocket } from "@/connections/socket";
 import { useRef } from "react";
 
 interface ChatProps {
@@ -17,17 +17,21 @@ interface ChatProps {
   handleSubmit: (inputValue: InputValue<"text">) => Promise<void>;
 }
 
-export function Chat({ chat, handleSubmit }: ChatProps) {
-  const [message, setMessage] = useState<IChat[]>([]);
-  const { username, readNotification } = useManage();
+export function DirecChat({ chat, handleSubmit }: ChatProps) {
+  const [message, setMessage] = useState<IGroupChat[]>([]);
+  const { username } = useManage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const socket = getSocket();
+  if (!socket.connected) {
+    connectSocket();
+  }
 
   const handleSubmit2 = async (
     inputValue: InputValue<"text">,
   ): Promise<void> => {
     await handleSubmit(inputValue);
-    const created = await createChat(chat.id, inputValue, username);
-    socket.emit("messageToServer", created, chat.id);
+    const created = await createGroupChat(chat.id, inputValue, username);
+    socket.emit("groupMessageToServer", created, chat.id);
     setMessage([...message, created]);
   };
 
@@ -53,49 +57,50 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
   }, [message]);
 
   useEffect(() => {
-    const handleNewMessage = (new_message: IChat) => {
+    const handleNewMessage = (new_message: IGroupChat) => {
       console.log(new_message);
       if (new_message.groupId === chat.id) {
         setMessage((prev) => [...prev, new_message]);
       }
     };
-    readNotification(chat.id);
 
-    socket.on("messageToClient", handleNewMessage);
+    socket.on("groupMessageToClient", handleNewMessage);
     return () => {
-      socket.off("messageToClient", handleNewMessage);
+      socket.off("groupMessageToClient", handleNewMessage);
     };
   }, [chat]);
 
   useEffect(() => {
-    fetchChatByGroupId(chat.id)
+    fetchGroupChatByGroupId(chat.id)
       .then((fetch_data) => setMessage(fetch_data))
       .catch((error) => console.error(error));
   }, [chat]);
 
   return (
-    <div className="chat-container">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50/30">
       {/* Messages Area */}
-      <div className="chat-messages-area" ref={scrollRef}>
+      <div className="flex-1 overflow-y-auto p-4" ref={scrollRef}>
         {message.map((msg) => (
           <div
             key={msg.id}
-            className={`chat-message-wrapper ${msg.username === username ? "justify-end" : "justify-start"}`}
+            className={`mb-4 flex ${msg.username === username ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`chat-message-content ${msg.username === username ? "flex-row-reverse" : "flex-row"}`}
+              className={`flex max-w-[70%] items-start gap-3 ${msg.username === username ? "flex-row-reverse" : "flex-row"}`}
             >
               {/* User Avatar */}
-              <div className="chat-user-avatar">
+              <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
                 <User size={16} className="text-white" />
               </div>
 
               {/* Message Bubble */}
               <div
-                className={`chat-message-bubble ${msg.username === username ? "own-message" : "other-message"}`}
+                className={`rounded-2xl p-4 shadow-sm ${msg.username === username ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" : "border border-gray-200 bg-white text-gray-800"}`}
               >
-                <div className="chat-username">{msg.username}</div>
-                <div className="chat-text">{msg.message}</div>
+                <div className="mb-1 text-sm font-semibold">{msg.username}</div>
+                <div className="text-base">
+                  {msg.message}
+                </div>
               </div>
             </div>
           </div>
@@ -103,7 +108,7 @@ export function Chat({ chat, handleSubmit }: ChatProps) {
       </div>
 
       {/* Input Area */}
-      <div className="chat-input-area">
+      <div className="border-t border-gray-200/50 bg-white/80 p-4 backdrop-blur-sm">
         <InputBox
           type_box={"text"}
           handleSubmit={handleSubmit2}

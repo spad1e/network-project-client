@@ -43,10 +43,9 @@ export const updateUser = async (
 };
 
 export const joinGroup = async (
-  username: string,
   groupId: string,
 ): Promise<IGroup> => {
-  const response = await apiClient.post<IGroup>(`/user/joingroup/${username}`, {
+  const response = await apiClient.post<IGroup>(`/user/joingroup`, {
     groupId,
   });
   return response.data;
