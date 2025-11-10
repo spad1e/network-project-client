@@ -42,9 +42,7 @@ export const updateUser = async (
   return response.data;
 };
 
-export const joinGroup = async (
-  groupId: string,
-): Promise<IGroup> => {
+export const joinGroup = async (groupId: string): Promise<IGroup> => {
   const response = await apiClient.post<IGroup>(`/user/joingroup`, {
     groupId,
   });
@@ -63,9 +61,7 @@ export const leaveGroup = async (
   );
   return response.data;
 };
-export const getUserByToken = async () : Promise<IUser> => {
-  const response = await apiClient.get<IUser>(
-    '/user/token'
-  )
+export const getUserByToken = async (): Promise<IUser> => {
+  const response = await apiClient.get<IUser>("/user/token");
   return response.data;
-}
+};

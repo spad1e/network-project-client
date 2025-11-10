@@ -35,7 +35,7 @@ export function Group({ setState, currChat, type }: GroupProps) {
               aria-pressed={isActive}
               className={[
                 "relative grid aspect-square place-items-center rounded-full",
-                "h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 mt-2",
+                "mt-2 h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14",
                 "bg-gradient-to-br from-indigo-500 to-purple-600 text-white",
                 "transition-all duration-200",
                 isActive

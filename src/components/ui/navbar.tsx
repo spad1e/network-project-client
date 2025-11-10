@@ -12,19 +12,33 @@ import { logout } from "@/lib/auth";
 export function NavBar() {
   const { showPanel } = useFloatPanel();
   const [drop, setDrop] = useState<boolean>(false);
-  const { username} = useManage();
+  const { username } = useManage();
   const router = useRouter();
   const pathname = usePathname();
 
-  const logoutCallback = () => {
-    router.push("/login");
-    logout();
-  };
+  return (
+    <>
+      <div className="h-20" />
+      <div className="fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between border-b-2 border-purple-400/30 bg-gradient-to-r from-purple-900/90 to-blue-900/90 px-8 shadow-2xl shadow-purple-500/20 backdrop-blur-md">
+        {/* Left Section - Logo */}
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
+            <Gamepad size={28} className="text-white" />
+          </div>
+          <div>
+            <h1 className="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-2xl font-bold text-transparent">
+              Network Adventure
+            </h1>
+            {username && (
+              <p className="text-sm text-white/70">Welcome, {username}</p>
+            )}
+          </div>
+        </div>
 
-          {/* Right Section - Navigation */}
-          <div className="flex items-center gap-6">
-            {/* Notification Bell */}
-            {/* <div className="relative">
+        {/* Right Section - Navigation */}
+        <div className="flex items-center gap-6">
+          {/* Notification Bell */}
+          {/* <div className="relative">
               <button
                 className={`relative flex h-10 w-10 items-center justify-center rounded-xl text-white/80 transition-all duration-200 hover:text-white hover:scale-105 ${drop ? "bg-purple-500/30 text-white" : "hover:bg-white/10"}`}
                 onClick={() => setDrop(!drop)}
@@ -75,8 +89,6 @@ export function NavBar() {
                               {noti.message}
                             </p>
                           </div>
-
-                          <p className="notification-message">{noti.message}</p>
                         </div>
                       ))
                     ) : (
@@ -84,37 +96,32 @@ export function NavBar() {
                         <Bell size={24} className="text-white/50" />
                         <p className="text-white/50">No notifications</p>
                       </div>
-                    ))
-                  ) : (
-                    <div className="notification-empty">
-                      <Bell size={24} className="text-white/50" />
-                      <p className="text-white/50">No notifications</p>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
             </div> */}
 
-            {/* Create Group Button */}
-            <button
-              className="flex items-center rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 font-semibold text-white transition-all duration-200 hover:from-purple-600 hover:to-pink-600 hover:scale-105 hover:shadow-lg"
-              onClick={() => showPanel(<CreateGroup />)}
-            >
-              <Users size={20} className="mr-2" />
-              Create Group
-            </button>
+          {/* Create Group Button */}
+          <button
+            className="flex items-center rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:from-purple-600 hover:to-pink-600 hover:shadow-lg"
+            onClick={() => showPanel(<CreateGroup />)}
+          >
+            <Users size={20} className="mr-2" />
+            Create Group
+          </button>
 
-            {/* Logout Button */}
-            <button
-              className="flex items-center rounded-xl border-2 border-white/30 bg-white/10 px-4 py-2 font-semibold text-white transition-all duration-200 hover:border-white/50 hover:bg-white/20 hover:scale-105"
-              onClick={async() => {
-                await logout();
-                router.push("/login")}}
-            >
-              <LogOut size={20} className="mr-2" />
-              Logout
-            </button>
-          </div>
+          {/* Logout Button */}
+          <button
+            className="flex items-center rounded-xl border-2 border-white/30 bg-white/10 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:border-white/50 hover:bg-white/20"
+            onClick={async () => {
+              await logout();
+              router.push("/login");
+            }}
+          >
+            <LogOut size={20} className="mr-2" />
+            Logout
+          </button>
         </div>
       </div>
     </>

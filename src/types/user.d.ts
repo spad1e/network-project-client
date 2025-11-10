@@ -3,4 +3,3 @@ export interface IUser {
   icon_id?: number;
   password: string;
 }
-

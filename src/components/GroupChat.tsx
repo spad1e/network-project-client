@@ -91,7 +91,10 @@ export function GroupChat({ chat, handleSubmit }: ChatProps) {
               {/* User Avatar */}
               <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
                 {/* <User size={16} className="text-white" /> */}
-                <IconComponent icon_id={userMap.get(msg.username)?.user.icon_id || 0} size={16} />
+                <IconComponent
+                  icon_id={userMap.get(msg.username)?.user.icon_id || 0}
+                  size={16}
+                />
               </div>
 
               {/* Message Bubble */}
@@ -99,9 +102,7 @@ export function GroupChat({ chat, handleSubmit }: ChatProps) {
                 className={`rounded-2xl p-4 shadow-sm ${msg.username === username ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" : "border border-gray-200 bg-white text-gray-800"}`}
               >
                 <div className="mb-1 text-sm font-semibold">{msg.username}</div>
-                <div className="text-base">
-                  {msg.message}
-                </div>
+                <div className="text-base">{msg.message}</div>
               </div>
             </div>
           </div>

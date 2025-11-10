@@ -36,7 +36,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
-, "src/components/RegisterPanel.tsx"  ],
+    ".next/types/**/*.ts",
+    "src/components/RegisterPanel.tsx"
+  ],
   "exclude": ["node_modules"]
 }

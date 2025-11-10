@@ -100,7 +100,7 @@ export default function HomePage() {
                             <h1 className="mb-4 text-2xl font-bold">
                               Group Members
                             </h1>
-                            <div className="p-2 rounded-lg bg-gray-300">
+                            <div className="rounded-lg bg-gray-300 p-2">
                               {members.map((member) => (
                                 <div key={member.username} className="flex">
                                   {/* <p>xxx</p> */}

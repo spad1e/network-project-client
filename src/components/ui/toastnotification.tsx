@@ -114,22 +114,25 @@ export function ToastNotification() {
       { onClick: () => void; onClose: () => void; title?: string }
     >();
     for (const n of notification) {
-      if(n.groupId !== undefined){
+      if (n.groupId !== undefined) {
         const group = groupMap.get(n.groupId);
         map.set(n.id, {
           title: group?.name ?? n.sender,
           onClick: () => {
-            updateCurrChat({id: n.groupId!, type: "group", name: group?.name ?? ""});
+            updateCurrChat({
+              id: n.groupId!,
+              type: "group",
+              name: group?.name ?? "",
+            });
             readNotification(n.id);
           },
           onClose: () => readNotification(n.id),
-        })
-      }
-      else{
+        });
+      } else {
         map.set(n.id, {
           title: n.sender,
           onClick: () => {
-            updateCurrChat({id: n.sender, type: "direct", name: n.sender});
+            updateCurrChat({ id: n.sender, type: "direct", name: n.sender });
             readNotification(n.id);
           },
           onClose: () => readNotification(n.id),

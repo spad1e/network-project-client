@@ -10,13 +10,8 @@ type PrivateProps = {
   type: "direct" | "group" | "";
 };
 
-export function Private({
-  setState,
-  currChat,
-  type
-}: PrivateProps) {
-  const {group, loadGroup, onlineUsers} = useManage();
-
+export function Private({ setState, currChat, type }: PrivateProps) {
+  const { group, loadGroup, onlineUsers } = useManage();
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -61,10 +56,10 @@ export function Private({
               {/* online indicator */}
               {p.online && (
                 <span
-                className="pointer-events-none absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 shadow-sm ring-2 ring-white sm:h-3.5 sm:w-3.5"
-                aria-hidden="true"
-              />
-      )}
+                  className="pointer-events-none absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 shadow-sm ring-2 ring-white sm:h-3.5 sm:w-3.5"
+                  aria-hidden="true"
+                />
+              )}
 
               <IconComponent icon_id={p.user.icon_id} size={32} />
             </button>

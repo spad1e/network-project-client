@@ -86,7 +86,10 @@ export function DirecChat({ chat, handleSubmit }: ChatProps) {
               {/* User Avatar */}
               <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
                 {/* <User size={16} className="text-white" /> */}
-                <IconComponent icon_id={userMap.get(msg.sender)?.user.icon_id || 0} size={16} />
+                <IconComponent
+                  icon_id={userMap.get(msg.sender)?.user.icon_id || 0}
+                  size={16}
+                />
               </div>
 
               {/* Message Bubble */}

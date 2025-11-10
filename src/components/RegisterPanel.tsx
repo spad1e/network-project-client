@@ -14,7 +14,16 @@ export function RegisterPanel() {
   const [error, setError] = useState<string>("");
 
   const characters = [
-    {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 13}
+    { id: 1 },
+    { id: 2 },
+    { id: 3 },
+    { id: 4 },
+    { id: 5 },
+    { id: 7 },
+    { id: 8 },
+    { id: 9 },
+    { id: 10 },
+    { id: 13 },
   ];
 
   const handleRegister = async () => {
@@ -32,7 +41,7 @@ export function RegisterPanel() {
     setError("");
 
     try {
-      await signUp({ username, icon_id : select, password });
+      await signUp({ username, icon_id: select, password });
       router.push("/login");
     } catch (err) {
       setError("Registration failed. Please try again.");
