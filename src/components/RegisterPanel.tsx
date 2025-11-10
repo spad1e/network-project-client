@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { User, Lock, Sword, Wand2, Crosshair, Loader } from "lucide-react";
+import { IconComponent } from "./IconComponenet";
 import { signUp } from "@/lib/auth";
 
 export function RegisterPanel() {
@@ -13,51 +14,7 @@ export function RegisterPanel() {
   const [error, setError] = useState<string>("");
 
   const characters = [
-    {
-      id: 1,
-      name: "Warrior",
-      icon: Sword,
-      color: "from-red-500 to-orange-500",
-    },
-    { id: 2, name: "Mage", icon: Wand2, color: "from-blue-500 to-purple-500" },
-    {
-      id: 3,
-      name: "Archer",
-      icon: Crosshair,
-      color: "from-green-500 to-teal-500",
-    },
-    {
-      id: 4,
-      name: "Warrior",
-      icon: Sword,
-      color: "from-red-500 to-orange-500",
-    },
-    { id: 5, name: "Mage", icon: Wand2, color: "from-blue-500 to-purple-500" },
-    {
-      id: 6,
-      name: "Archer",
-      icon: Crosshair,
-      color: "from-green-500 to-teal-500",
-    },
-    {
-      id: 7,
-      name: "Warrior",
-      icon: Sword,
-      color: "from-red-500 to-orange-500",
-    },
-    { id: 8, name: "Mage", icon: Wand2, color: "from-blue-500 to-purple-500" },
-    {
-      id: 9,
-      name: "Archer",
-      icon: Crosshair,
-      color: "from-green-500 to-teal-500",
-    },
-    {
-      id: 10,
-      name: "Warrior",
-      icon: Sword,
-      color: "from-red-500 to-orange-500",
-    },
+    {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 13}
   ];
 
   const handleRegister = async () => {
@@ -75,7 +32,7 @@ export function RegisterPanel() {
     setError("");
 
     try {
-      await signUp({ username, icon_id: select, password });
+      await signUp({ username, icon_id : select, password });
       router.push("/login");
     } catch (err) {
       setError("Registration failed. Please try again.");
@@ -113,7 +70,7 @@ export function RegisterPanel() {
           <input
             type="text"
             className="w-full rounded-2xl border-2 border-purple-300/30 bg-white/10 p-4 pl-12 text-lg text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 focus:outline-none"
-            placeholder="Choose your hero name"
+            placeholder="Choose your name"
             value={username}
             onChange={(e) => {
               setUsername(e.target.value);
@@ -155,11 +112,10 @@ export function RegisterPanel() {
         </label>
         <div className="grid grid-cols-5 gap-4">
           {characters.map((char) => {
-            const IconComponent = char.icon;
             return (
               <div
                 key={char.id}
-                className={`character-card group relative cursor-pointer transition-all duration-300 ${
+                className={`group relative flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-purple-300/30 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 ${
                   select === char.id
                     ? "scale-105 border-purple-400 shadow-lg shadow-purple-500/50"
                     : "hover:scale-102 hover:border-purple-300/50"
@@ -171,14 +127,9 @@ export function RegisterPanel() {
                   }
                 }}
               >
-                <div
-                  className={`character-icon bg-gradient-to-br ${char.color}`}
-                >
-                  <IconComponent size={32} className="text-white" />
+                <div className="h-20 w-20">
+                  <IconComponent icon_id={char.id} />
                 </div>
-                {select === char.id && (
-                  <div className="selected-indicator"></div>
-                )}
               </div>
             );
           })}
@@ -197,7 +148,7 @@ export function RegisterPanel() {
             Creating Account...
           </>
         ) : (
-          "Create Hero"
+          "Create Account"
         )}
       </button>
 

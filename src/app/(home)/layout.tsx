@@ -7,6 +7,8 @@ import { NavBar } from "@/components/ui/navbar";
 import { FloatPanelProvider } from "@/components/context/FloatPanelProvider";
 import { CurrentChatProvider } from "@/components/context/CurrentChatProvider";
 import { ManageProvider } from "@/components/context/ManageProvider";
+import { RealtimeNotificationProvider } from "@/components/context/RealtimeNotificationProvider";
+import { ToastNotification } from "@/components/ui/toastnotification";
 
 export const metadata: Metadata = {
   title: "Network Adventure - Multiplayer Game",
@@ -28,10 +30,16 @@ export default function RootLayout({
     <html lang="en" className={geist.className}>
       <body className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 pt-20">
         <ManageProvider>
-          <FloatPanelProvider>
-            <CurrentChatProvider>{children}</CurrentChatProvider>
-            <NavBar />
-          </FloatPanelProvider>
+            <FloatPanelProvider>
+              <CurrentChatProvider>
+                 <RealtimeNotificationProvider>
+                {children}
+                <NavBar /> 
+                <ToastNotification />
+                </RealtimeNotificationProvider>
+              </CurrentChatProvider>
+            </FloatPanelProvider>
+         
         </ManageProvider>
       </body>
     </html>

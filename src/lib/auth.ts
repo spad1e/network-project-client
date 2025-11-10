@@ -22,12 +22,9 @@ export const signIn = async (data: IUserSignIn) => {
     throw error;
   }
 };
-
 export const logout = async () => {
   try {
     await apiClient.post(`/auth/logout`);
-    console.log("Logging out, disconnecting socket...");
-    socket.disconnect();
   } catch (error) {
     console.error("Error Logout:", error);
     throw error;

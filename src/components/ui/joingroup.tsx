@@ -2,14 +2,20 @@ import { InputBox } from "./inputbox"
 import type { InputValue } from "@/types/input"
 import { useManage } from "../context/ManageProvider";
 import { joinGroup } from "@/lib/user";
+import { useFloatPanel } from "../context/FloatPanelProvider";
 import { socket } from "@/connections/socket";
 export function JoinGroup(){
-    const {loadGroup, username} = useManage();
+    const {loadGroup} = useManage();
+    const { hidePanel } = useFloatPanel();
+    // const socket = getSocket();
+    // if (!socket.connected) {
+    //   connectSocket();
+    // }
     const handleSubmit = async (inputValue: InputValue<"text">): Promise<void> => {
-      console.log(inputValue);
-      const group = await joinGroup(username, inputValue);
-      socket.emit("join_group", group.id);
+      const group = await joinGroup(inputValue);
+      socket.emit("joinGroup", group.id);
       await loadGroup();
+      hidePanel();
       return Promise.resolve();
     };
     return <div className="h-full grid grid-cols-1 grid-rows-2 relative">

@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/axios";
 import { type IGroup } from "@/types/group";
+import { type IUser } from "@/types/user";
 
 export const fetchGroups = async (): Promise<IGroup[]> => {
   const response = await apiClient.get<IGroup[]>("/group");
@@ -16,9 +17,7 @@ export const fetchGroupByUsername = async (): Promise<IGroup[]> => {
   }
 };
 
-export const createGroup = async (
-  name: string,
-): Promise<IGroup> => {
+export const createGroup = async (name: string): Promise<IGroup> => {
   const response = await apiClient.post<IGroup>(
     "/group",
     {
@@ -29,7 +28,7 @@ export const createGroup = async (
   return response.data;
 };
 
-export const deleteGroup = async (id: number): Promise<void> => {
+export const deleteGroup = async (id: string): Promise<void> => {
   await apiClient.delete(`/group/${id}`);
 };
 
@@ -39,4 +38,14 @@ export const updateGroup = async (
 ): Promise<IGroup> => {
   const response = await apiClient.put<IGroup>(`/group/${id}`, { name });
   return response.data;
+};
+
+export const fetchGroupMembersById = async (id: string): Promise<IUser[]> => {
+  try {
+    const response = await apiClient.get<IUser[]>(`/group/member/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching groups member by id:", error);
+    throw error;
+  }
 };

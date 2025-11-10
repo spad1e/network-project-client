@@ -2,116 +2,138 @@
 import { useContext, createContext, useState, useEffect, useRef } from "react";
 import type { IGroup } from "@/types/group";
 import { fetchGroupByUsername } from "@/lib/group";
-import { getUserByToken } from "@/lib/user";
+import { getUserByToken, fetchUsers} from "@/lib/user";
 import { usePathname, useRouter } from "next/navigation";
-import type { IChat } from "@/types/chat";
 import { socket } from "@/connections/socket";
+import type { IUser } from "@/types/user";
+import type { ICurrChat } from "@/types/chat";
+import { set } from "zod/v4";
 
 interface ManageContextType {
+  onlineUsers: {user: IUser, online: boolean}[];
+  userMap: Map<string, {user: IUser, online: boolean}>;
   groupMap: Map<string, IGroup>;
   group: IGroup[];
   loadGroup: () => Promise<void>;
   getGroup: () => IGroup[];
   username: string;
   memUsername: (username: string) => void;
-  readNotification: (c: string) => void;
-  notification: IChat[];
-  currChat: IGroup | undefined;
-  updateCurrChat: (c: IGroup | undefined) => void;
 }
 
 const ManageContext = createContext<ManageContextType | undefined>(undefined);
 
-export function ManageProvider({ children }: { children: React.ReactNode }) {
-  const noti = new Map<string, IChat>();
-  const groupMapRef = useRef(new Map<string, IGroup>());
-  const [group, setGroup] = useState<IGroup[]>([]);
-  const [username, setUsername] = useState<string>("");
-  const [notification, setNotification] = useState<IChat[]>([]);
-  const [currChat, setCurrChat] = useState<IGroup | undefined>(undefined);
-  const currChatRef = useRef<IGroup | undefined>(undefined);
-  const loadGroup = async (): Promise<void> => {
-    const data = await fetchGroupByUsername();
-    groupMapRef.current.clear();
-    data.map((item) => {
-      socket.emit("join_group", item.id);
-      groupMapRef.current.set(item.id, item);
-    });
-    setGroup(Array.from(groupMapRef.current.values()));
-  };
-  const getGroup = (): IGroup[] => {
-    return group;
-  };
-  const updateCurrChat = (c: IGroup | undefined) => {
-    currChatRef.current = c;
-    setCurrChat((prev) => {
-      return c;
-    });
-  };
-  const memUsername = (username: string): void => {
-    setUsername(username);
-  };
-  const readNotification = (c: string): void => {
-    noti.delete(c);
-    const filter = notification.filter((item) => item.groupId !== c);
-    setNotification(filter);
-  };
-  const pathname = usePathname();
-  const router = useRouter();
-  const redirectIfNotAllowed = () => {
-    const allowed = ["/login", "/register"];
-    if (!allowed.includes(pathname)) {
-      router.push("/login");
+
+
+export function ManageProvider({
+    children
+}: {children: React.ReactNode}){
+    const groupMapRef = useRef(new Map<string, IGroup>());
+    const [group, setGroup] = useState<IGroup[]>([]);
+    const [username, setUsername] = useState<string>("");
+    const usernameRef = useRef<string>("");
+    const userRef = useRef<IUser[]>([]);
+    const userMapRef = useRef(new Map<string, {user: IUser, online: boolean}>());
+    // const socket = getSocket();
+    // if(!socket.connected){
+    //   connectSocket();
+    // }
+    const [onlineUsers, setOnlineUsers] = useState<{user: IUser, online: boolean}[]>([]);
+    const loadGroup = async() : Promise<void> =>{
+        const data = await fetchGroupByUsername();
+        groupMapRef.current.clear();
+        data.map(item => {
+          socket.emit("joinGroup", item.id);
+          groupMapRef.current.set(item.id, item);
+        })
+        setGroup(Array.from(groupMapRef.current.values()));
+
     }
-  };
+    const getGroup = () : IGroup[] => {
+        return group;
+    }
+    const memUsername = (username: string) : void =>{
+        setUsername(username);
+        usernameRef.current = username;
+    }
+    
 
-  useEffect(() => {
-    const handleNotification = (c: IChat): void => {
-      noti.set(c.groupId, c);
-      if (c.groupId !== currChatRef.current?.id) {
-        setNotification((prev) => {
-          const filtered = prev.filter((item) => item.groupId !== c.groupId);
-          return [...filtered, c];
+    const pathname = usePathname();
+    const router = useRouter();
+    const redirectIfNotAllowed = () => {
+      const allowed = ["/login", "/register"];
+      if (!allowed.includes(pathname)) {
+        router.push("/login");
+      }
+    };
+    useEffect(() => {
+      const handleOnlineUsers = (users: IUser[]) => {
+        Array.from(userMapRef.current.keys()).map((u: string) => {
+          const temp = userMapRef.current.get(u);
+          if(!temp) return;
+          userMapRef.current.set(u, {user: temp.user, online: false});
         });
-      }
-    };
+        users.filter(
+          (u) => {
+            userMapRef.current.set(u.username, {user: u, online: true});
+          }
+        );
+        const all_user = Array.from(userMapRef.current.values())
+          .map((u) => (u.user.username !== usernameRef.current ? u : undefined))
+          .filter(
+            (u): u is { user: IUser; online: boolean } => u !== undefined,
+          ).sort((a, b) => (a.online === b.online ? a.user.username.localeCompare(b.user.username) : a.online ? -1 : 1));
 
-    socket.on("messageToClient", handleNotification);
-    return () => {
-      socket.off("messageToClient", handleNotification);
-    };
-  }, []);
-  useEffect(() => {
-    console.log("WHYYY");
-    const init = async (): Promise<void> => {
-      try {
-        await loadGroup();
-        const data = await getUserByToken();
-        memUsername(data.username);
-      } catch {
-        redirectIfNotAllowed();
-      }
-    };
-    init().catch((error) => console.error(error));
-  }, []);
-  return (
-    <ManageContext.Provider
-      value={{
-        groupMap: groupMapRef.current,
-        group,
-        loadGroup,
-        getGroup,
-        username,
-        memUsername,
-        readNotification,
-        notification,
-        updateCurrChat,
-        currChat,
-      }}
-    >
-      {children}
-    </ManageContext.Provider>
-  );
+        setOnlineUsers(all_user);
+      };
+      const init = async (): Promise<void> => {
+        try {
+          await loadGroup();
+          
+          const data = await getUserByToken();
+          memUsername(data.username);
+          const users = await fetchUsers();
+          userRef.current = users;
+          users.map(u => {
+            userMapRef.current.set(u.username, {user: u, online: false});
+          });
+          
+        } catch {
+          redirectIfNotAllowed();
+        }
+      };
+      init()
+        .then(() => {
+          if (socket.connected) return;
+
+          socket.on("onlineUsers", handleOnlineUsers);
+          
+          socket.connect();
+          return () => {
+              socket.disconnect();
+            };
+          })
+        .catch(
+          (error) => console.error(error)
+        );
+    }, []);
+
+
+    return (
+      <ManageContext.Provider
+        value={{
+          onlineUsers,
+          userMap: userMapRef.current,
+          groupMap: groupMapRef.current,
+          group,
+          loadGroup,
+          getGroup,
+          username,
+          memUsername,
+        }}
+      >
+        {children}
+      </ManageContext.Provider>
+    );
 }
 
 export function useManage() {
