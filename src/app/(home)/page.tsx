@@ -32,7 +32,6 @@ export default function HomePage() {
     }
     return Promise.resolve();
   };
-  const component = <h1>Hello</h1>;
   return (
     <div className="relative h-screen w-full">
       {/* Grid panels */}

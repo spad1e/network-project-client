@@ -7,7 +7,7 @@ import { signUp } from "@/lib/auth";
 
 export function RegisterPanel() {
   const router = useRouter();
-  const [select, setSelect] = useState<number | null>(null);
+  const [select, setSelect] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);

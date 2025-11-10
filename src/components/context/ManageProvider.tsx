@@ -1,5 +1,5 @@
-"use client"
-import { useContext, createContext, useState, useEffect, useRef} from "react"
+"use client";
+import { useContext, createContext, useState, useEffect, useRef } from "react";
 import type { IGroup } from "@/types/group";
 import { fetchGroupByUsername } from "@/lib/group";
 import { getUserByToken, fetchUsers} from "@/lib/user";
@@ -20,7 +20,7 @@ interface ManageContextType {
   memUsername: (username: string) => void;
 }
 
-const ManageContext = createContext<ManageContextType|undefined>(undefined);
+const ManageContext = createContext<ManageContextType | undefined>(undefined);
 
 
 
@@ -136,10 +136,10 @@ export function ManageProvider({
     );
 }
 
-export function useManage(){
-    const ctx = useContext(ManageContext);
-    if (!ctx) {
-        throw new Error("useFloatPanel must be used inside ManageProvider");
-    }
-    return ctx;
+export function useManage() {
+  const ctx = useContext(ManageContext);
+  if (!ctx) {
+    throw new Error("useFloatPanel must be used inside ManageProvider");
+  }
+  return ctx;
 }
