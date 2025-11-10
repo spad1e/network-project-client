@@ -2,14 +2,16 @@
 import { useContext, createContext, useState, useEffect, useRef} from "react"
 import type { IGroup } from "@/types/group";
 import { fetchGroupByUsername } from "@/lib/group";
-import { getUserByToken } from "@/lib/user";
+import { getUserByToken, fetchUsers} from "@/lib/user";
 import { usePathname, useRouter } from "next/navigation";
 import { socket } from "@/connections/socket";
 import type { IUser } from "@/types/user";
 import type { ICurrChat } from "@/types/chat";
+import { set } from "zod/v4";
 
 interface ManageContextType {
-  onlineUsers: IUser[];
+  onlineUsers: {user: IUser, online: boolean}[];
+  userMap: Map<string, {user: IUser, online: boolean}>;
   groupMap: Map<string, IGroup>;
   group: IGroup[];
   loadGroup: () => Promise<void>;
@@ -29,12 +31,13 @@ export function ManageProvider({
     const [group, setGroup] = useState<IGroup[]>([]);
     const [username, setUsername] = useState<string>("");
     const usernameRef = useRef<string>("");
-    const currChatRef = useRef<ICurrChat | undefined>(undefined);
+    const userRef = useRef<IUser[]>([]);
+    const userMapRef = useRef(new Map<string, {user: IUser, online: boolean}>());
     // const socket = getSocket();
     // if(!socket.connected){
     //   connectSocket();
     // }
-    const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<{user: IUser, online: boolean}[]>([]);
     const loadGroup = async() : Promise<void> =>{
         const data = await fetchGroupByUsername();
         groupMapRef.current.clear();
@@ -52,6 +55,7 @@ export function ManageProvider({
         setUsername(username);
         usernameRef.current = username;
     }
+    
 
     const pathname = usePathname();
     const router = useRouter();
@@ -61,19 +65,38 @@ export function ManageProvider({
         router.push("/login");
       }
     };
-     useEffect(() => {
+    useEffect(() => {
       const handleOnlineUsers = (users: IUser[]) => {
-        const filtered = users.filter(
-          (u) => u.username !== usernameRef.current,
+        Array.from(userMapRef.current.keys()).map((u: string) => {
+          const temp = userMapRef.current.get(u);
+          if(!temp) return;
+          userMapRef.current.set(u, {user: temp.user, online: false});
+        });
+        users.filter(
+          (u) => {
+            userMapRef.current.set(u.username, {user: u, online: true});
+          }
         );
+        const all_user = Array.from(userMapRef.current.values())
+          .map((u) => (u.user.username !== usernameRef.current ? u : undefined))
+          .filter(
+            (u): u is { user: IUser; online: boolean } => u !== undefined,
+          ).sort((a, b) => (a.online === b.online ? a.user.username.localeCompare(b.user.username) : a.online ? -1 : 1));
 
-        setOnlineUsers(filtered);
+        setOnlineUsers(all_user);
       };
       const init = async (): Promise<void> => {
         try {
           await loadGroup();
+          
           const data = await getUserByToken();
           memUsername(data.username);
+          const users = await fetchUsers();
+          userRef.current = users;
+          users.map(u => {
+            userMapRef.current.set(u.username, {user: u, online: false});
+          });
+          
         } catch {
           redirectIfNotAllowed();
         }
@@ -81,7 +104,9 @@ export function ManageProvider({
       init()
         .then(() => {
           if (socket.connected) return;
+
           socket.on("onlineUsers", handleOnlineUsers);
+          
           socket.connect();
           return () => {
               socket.disconnect();
@@ -97,6 +122,7 @@ export function ManageProvider({
       <ManageContext.Provider
         value={{
           onlineUsers,
+          userMap: userMapRef.current,
           groupMap: groupMapRef.current,
           group,
           loadGroup,

@@ -11,6 +11,7 @@ import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
 import { socket } from "@/connections/socket";
 import { useRef } from "react";
+import { IconComponent } from "./IconComponenet";
 
 interface ChatProps {
   chat: IGroup;
@@ -19,7 +20,7 @@ interface ChatProps {
 
 export function GroupChat({ chat, handleSubmit }: ChatProps) {
   const [message, setMessage] = useState<IGroupChat[]>([]);
-  const { username } = useManage();
+  const { username, userMap } = useManage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // const socket = getSocket();
   // if (!socket.connected) {
@@ -89,7 +90,8 @@ export function GroupChat({ chat, handleSubmit }: ChatProps) {
             >
               {/* User Avatar */}
               <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
-                <User size={16} className="text-white" />
+                {/* <User size={16} className="text-white" /> */}
+                <IconComponent icon_id={userMap.get(msg.username)?.user.icon_id || 0} size={16} />
               </div>
 
               {/* Message Bubble */}

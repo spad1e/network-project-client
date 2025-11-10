@@ -11,6 +11,7 @@ import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
 import { useRef } from "react";
 import { socket } from "@/connections/socket";
+import { IconComponent } from "./IconComponenet";
 
 interface ChatProps {
   chat: IGroup;
@@ -19,7 +20,7 @@ interface ChatProps {
 
 export function DirecChat({ chat, handleSubmit }: ChatProps) {
   const [message, setMessage] = useState<IDirectChat[]>([]);
-  const { username } = useManage();
+  const { username, userMap } = useManage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const handleSubmit2 = async (
     inputValue: InputValue<"text">,
@@ -77,21 +78,22 @@ export function DirecChat({ chat, handleSubmit }: ChatProps) {
         {message.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-4 flex ${msg.receiver === username ? "justify-end" : "justify-start"}`}
+            className={`mb-4 flex ${msg.sender === username ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`flex max-w-[70%] items-start gap-3 ${msg.receiver === username ? "flex-row-reverse" : "flex-row"}`}
+              className={`flex max-w-[70%] items-start gap-3 ${msg.sender === username ? "flex-row-reverse" : "flex-row"}`}
             >
               {/* User Avatar */}
               <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
-                <User size={16} className="text-white" />
+                {/* <User size={16} className="text-white" /> */}
+                <IconComponent icon_id={userMap.get(msg.sender)?.user.icon_id || 0} size={16} />
               </div>
 
               {/* Message Bubble */}
               <div
-                className={`rounded-2xl p-4 shadow-sm ${msg.receiver === username ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" : "border border-gray-200 bg-white text-gray-800"}`}
+                className={`rounded-2xl p-4 shadow-sm ${msg.sender === username ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" : "border border-gray-200 bg-white text-gray-800"}`}
               >
-                <div className="mb-1 text-sm font-semibold">{msg.receiver}</div>
+                <div className="mb-1 text-sm font-semibold">{msg.sender}</div>
                 <div className="text-base">{msg.message}</div>
               </div>
             </div>
