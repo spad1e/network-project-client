@@ -13,8 +13,10 @@ import { DirecChat } from "@/components/DirectChat";
 import type { ICurrChat } from "@/types/chat";
 import { useRealtimeNotification } from "@/components/context/RealtimeNotificationProvider";
 import { fetchGroupMembersById } from "@/lib/group";
+import { useManage } from "@/components/context/ManageProvider";
 
 export default function HomePage() {
+  const { setJoinGroup } = useManage();
   const { showPanel } = useFloatPanel();
   const { updateCurrChat, currChat } = useCurrentChat();
   const { readNotification, map_notification } = useRealtimeNotification();
@@ -35,8 +37,8 @@ export default function HomePage() {
   return (
     <div className="relative h-screen w-full">
       {/* Grid panels */}
-      <div className="order-1 grid h-full w-full grid-cols-1 grid-rows-3 gap-6 p-6 sm:max-h-[calc(100vh)] sm:grid-cols-2 sm:grid-rows-2">
-        <div className="row-span-1 h-full">
+      <div className="order-1 grid h-full w-full grid-cols-2 grid-rows-2 gap-6 p-6 sm:max-h-[calc(100vh)] sm:grid-cols-2 sm:grid-rows-2">
+        <div className="col-span-1 row-span-1 h-full">
           <BoxPanel
             boxName={
               <h1 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-2xl font-bold text-transparent drop-shadow-md">
@@ -53,7 +55,7 @@ export default function HomePage() {
             }
           />
         </div>
-        <div className="order-3 row-span-1 h-full sm:order-2 sm:row-span-2">
+        <div className="order-3 col-span-1 row-span-2 h-full sm:order-2 sm:row-span-2">
           <BoxPanel
             boxName={
               !currChat ? (
@@ -130,7 +132,7 @@ export default function HomePage() {
             }
           />
         </div>
-        <div className="order-2 row-span-1 h-full sm:order-3">
+        <div className="order-2 row-span-1 col-span-1 h-full sm:order-3">
           <BoxPanel
             boxName={
               <h1 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-2xl font-bold text-transparent drop-shadow-md">
@@ -148,7 +150,8 @@ export default function HomePage() {
             actionName={
               <button
                 className="rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:from-purple-600 hover:to-blue-600 hover:shadow-lg active:from-purple-700 active:to-blue-700"
-                onClick={() => {
+                onClick={async() => {
+                  await setJoinGroup();
                   showPanel(<JoinGroup />);
                 }}
               >

@@ -115,7 +115,7 @@ export function ToastNotification() {
     >();
     for (const n of notification) {
       if (n.groupId !== undefined) {
-        const group = groupMap.get(n.groupId);
+        const group = groupMap.get(n.groupId)?.group;
         map.set(n.id, {
           title: group?.name ?? n.sender,
           onClick: () => {

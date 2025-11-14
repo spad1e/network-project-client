@@ -1,7 +1,7 @@
 "use client";
 import { useContext, createContext, useState, useEffect, useRef } from "react";
 import type { IGroup } from "@/types/group";
-import { fetchGroupByUsername } from "@/lib/group";
+import { fetchGroupByUsername, fetchGroups } from "@/lib/group";
 import { getUserByToken, fetchUsers } from "@/lib/user";
 import { usePathname, useRouter } from "next/navigation";
 import { socket } from "@/connections/socket";
@@ -12,18 +12,19 @@ import { set } from "zod/v4";
 interface ManageContextType {
   onlineUsers: { user: IUser; online: boolean }[];
   userMap: Map<string, { user: IUser; online: boolean }>;
-  groupMap: Map<string, IGroup>;
+  groupMap: Map<string, { group: IGroup; join: boolean }>;
   group: IGroup[];
   loadGroup: () => Promise<void>;
   getGroup: () => IGroup[];
   username: string;
   memUsername: (username: string) => void;
+  setJoinGroup: () => void;
 }
 
 const ManageContext = createContext<ManageContextType | undefined>(undefined);
 
 export function ManageProvider({ children }: { children: React.ReactNode }) {
-  const groupMapRef = useRef(new Map<string, IGroup>());
+  const groupMapRef = useRef(new Map<string, {group: IGroup ; join: boolean}>());
   const [group, setGroup] = useState<IGroup[]>([]);
   const [username, setUsername] = useState<string>("");
   const usernameRef = useRef<string>("");
@@ -38,14 +39,34 @@ export function ManageProvider({ children }: { children: React.ReactNode }) {
   const [onlineUsers, setOnlineUsers] = useState<
     { user: IUser; online: boolean }[]
   >([]);
+  const setJoinGroup = async() => {
+    const data_2 = await fetchGroups();
+    data_2.map((item) => {
+      if (!groupMapRef.current.has(item.id)) {
+        groupMapRef.current.set(item.id, {group: item, join: false});
+      }
+    });
+  }
   const loadGroup = async (): Promise<void> => {
-    const data = await fetchGroupByUsername();
     groupMapRef.current.clear();
+    const data_2 = await fetchGroups();
+    data_2.map((item) => {
+      if (!groupMapRef.current.has(item.id)) {
+        groupMapRef.current.set(item.id, {group: item, join: false});
+      }
+    });
+    
+      
+    const data = await fetchGroupByUsername();
     data.map((item) => {
       socket.emit("joinGroup", item.id);
-      groupMapRef.current.set(item.id, item);
+      groupMapRef.current.set(item.id, {group: item, join: true});
     });
-    setGroup(Array.from(groupMapRef.current.values()));
+    setGroup(Array
+      .from(groupMapRef.current.values())
+      .filter((v) => v && v.join === true)
+      .map((v) => v.group));
+
   };
   const getGroup = (): IGroup[] => {
     return group;
@@ -126,6 +147,7 @@ export function ManageProvider({ children }: { children: React.ReactNode }) {
         getGroup,
         username,
         memUsername,
+        setJoinGroup,
       }}
     >
       {children}
