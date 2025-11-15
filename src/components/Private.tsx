@@ -1,7 +1,4 @@
-import type { ChatBoxType } from "@/types/type";
-import type { IGroup } from "@/types/group";
 import { useManage } from "./context/ManageProvider";
-import { useEffect, useState } from "react";
 import type { ICurrChat } from "@/types/chat";
 import { IconComponent } from "./IconComponenet";
 type PrivateProps = {
@@ -11,14 +8,13 @@ type PrivateProps = {
 };
 
 export function Private({ setState, currChat, type }: PrivateProps) {
-  const { group, loadGroup, onlineUsers } = useManage();
+  const { onlineUsers } = useManage();
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
       {onlineUsers.map((p) => {
         const isActive = currChat === p.user.username && type === "direct";
-        const initial =
-          (p.user.username?.trim?.().charAt(0).toUpperCase() as string) || "G";
+
 
         return (
           <div

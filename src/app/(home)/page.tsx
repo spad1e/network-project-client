@@ -21,7 +21,7 @@ export default function HomePage() {
   const { updateCurrChat, currChat } = useCurrentChat();
   const { readNotification, map_notification } = useRealtimeNotification();
 
-  const handleSubmit = (inputValue: InputValue<"text">): Promise<void> => {
+  const handleSubmit = (): Promise<void> => {
     return Promise.resolve();
   };
   const handleUpdateCurrChat = (c: ICurrChat | undefined): Promise<void> => {
@@ -45,12 +45,11 @@ export default function HomePage() {
                 {"Online Friend"}
               </h1>
             }
-            bgColor="sea-blue"
             page={
               <Private
                 setState={handleUpdateCurrChat}
                 currChat={currChat?.id ?? null}
-                type={currChat?.type || ""}
+                type={currChat?.type ?? ""}
               />
             }
           />
@@ -71,7 +70,6 @@ export default function HomePage() {
                 </div>
               )
             }
-            bgColor="grass-green"
             page={
               currChat && currChat.type == "group" ? (
                 <GroupChat
@@ -95,7 +93,7 @@ export default function HomePage() {
                     onClick={async () => {
                       try {
                         const members = await fetchGroupMembersById(
-                          currChat!.id,
+                          currChat.id,
                         );
                         showPanel(
                           <div className="">
@@ -122,9 +120,12 @@ export default function HomePage() {
                 )}
                 <button
                   className="rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:from-purple-600 hover:to-blue-600 hover:shadow-lg active:from-purple-700 active:to-blue-700"
-                  onClick={() => {
-                    handleUpdateCurrChat(undefined);
-                  }}
+                  onClick={async() => {
+                    try{
+                    await handleUpdateCurrChat(undefined);
+                  }catch (error) {
+                    console.error("Error leaving chat:", error);
+                  }}}
                 >
                   Left Chat
                 </button>
@@ -139,12 +140,11 @@ export default function HomePage() {
                 {"Group"}
               </h1>
             }
-            bgColor="sky-blue"
             page={
               <Group
                 setState={handleUpdateCurrChat}
                 currChat={currChat?.id ?? null}
-                type={currChat?.type || ""}
+                type={currChat?.type ?? ""}
               />
             }
             actionName={

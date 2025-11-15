@@ -1,7 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useRef } from "react";
 import type { ChatTextType } from "@/types/type";
-import type { IGroup } from "@/types/group";
 import type { ICurrChat } from "@/types/chat";
 
 interface CurrentChatContextType {
@@ -19,11 +18,7 @@ export function CurrentChatProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [group_id, setGroup_id] = useState<number | null>(null);
-  const [chat, setChat] = useState<ChatTextType[]>([]);
-  const selectChat = async (group: number): Promise<void> => {
-    setGroup_id(group);
-  };
+
   const [currChat, setCurrChat] = useState<ICurrChat | undefined>(undefined);
   const currChatRef = useRef<ICurrChat | undefined>(undefined);
   const updateCurrChat = (c: ICurrChat | undefined) => {

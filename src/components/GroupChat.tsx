@@ -1,8 +1,7 @@
 "use client";
 
-import type { ChatTextType } from "@/types/type";
 import { useEffect, useState } from "react";
-import { Send, User } from "lucide-react";
+import { Send } from "lucide-react";
 import { InputBox } from "@/components/ui/inputbox";
 import type { InputValue } from "@/types/input";
 import { fetchGroupChatByGroupId, createGroupChat } from "@/lib/chat";
@@ -92,7 +91,7 @@ export function GroupChat({ chat, handleSubmit }: ChatProps) {
               <div className="flex-shrink-0r flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-md">
                 {/* <User size={16} className="text-white" /> */}
                 <IconComponent
-                  icon_id={userMap.get(msg.username)?.user.icon_id || 0}
+                  icon_id={userMap.get(msg.username)?.user.icon_id ?? 0}
                   size={16}
                 />
               </div>

@@ -1,6 +1,5 @@
 import {
   User,
-  Lock,
   Sword,
   Wand2,
   Crosshair,

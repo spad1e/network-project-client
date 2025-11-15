@@ -1,6 +1,5 @@
 "use client";
 import { useContext, useState, createContext } from "react";
-import FloatPanel from "../ui/floatpanel";
 
 interface FloatPanelContextType {
   showPanel: (panel: React.ReactNode) => void;

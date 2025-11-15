@@ -1,10 +1,7 @@
-import { InputBox } from "./inputbox";
-import type { InputValue } from "@/types/input";
 import { useManage } from "../context/ManageProvider";
 import { joinGroup } from "@/lib/user";
 import { useFloatPanel } from "../context/FloatPanelProvider";
 import { socket } from "@/connections/socket";
-import { group } from "console";
 export function JoinGroup() {
   const { loadGroup, groupMap} = useManage();
   const currgroup = Array.from(groupMap.values())
@@ -12,28 +9,37 @@ export function JoinGroup() {
    .map((v) => v.group);
   const { hidePanel } = useFloatPanel();
 
-  const handleSubmit = async (
+  const handleSubmit = async(
     inputValue: string,
   ): Promise<void> => {
-    console.log("JOIN GROUP ID:", inputValue);
-    const group = await joinGroup(inputValue);
-    socket.emit("joinGroup", group.id);
-    await loadGroup();
-    hidePanel();
-    return Promise.resolve();
+    try{
+      console.log("JOIN GROUP ID:", inputValue);
+      const group = await joinGroup(inputValue);
+      socket.emit("joinGroup", group.id);
+      await loadGroup();
+      hidePanel();
+      return Promise.resolve();
+    }catch (error) {
+      console.error("Error joining group:", error);
+    }
+    
   };
   return (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {currgroup.map((p) => {
             const initial =
-              (p.name?.trim?.().charAt(0).toUpperCase() as string) || "G";
+              (p.name?.trim?.().charAt(0).toUpperCase()) || "G";
     
             return (
               <div
                 key={p.id}
                 className="group/tile flex flex-col items-center gap-2"
                 onClick={async () => {
-                  handleSubmit(p.id);
+                  try{
+                    await handleSubmit(p.id);
+                  }catch (error) {
+                    console.error("Error joining group:", error);
+                  }
                 }}
               >
                 <button

@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { User, Lock, Sword, Wand2, Crosshair, Loader } from "lucide-react";
+import { User, Lock, Loader } from "lucide-react";
 import { IconComponent } from "./IconComponenet";
 import { signUp } from "@/lib/auth";
 

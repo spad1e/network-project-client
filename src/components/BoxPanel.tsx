@@ -2,14 +2,12 @@ import React from "react";
 
 type BoxPanelProps = {
   boxName?: React.ReactNode;
-  bgColor?: string;
   page: React.ReactNode;
   actionName?: React.ReactNode;
 };
 
 export function BoxPanel({
   boxName, // default name
-  bgColor = "bg-white", // white background
   page,
   actionName,
 }: BoxPanelProps) {

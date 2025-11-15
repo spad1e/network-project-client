@@ -22,7 +22,7 @@ export function Group({ setState, currChat, type }: GroupProps) {
       {currgroup.map((p) => {
         const isActive = currChat === p.id && type === "group";
         const initial =
-          (p.name?.trim?.().charAt(0).toUpperCase() as string) || "G";
+          (p.name?.trim?.().charAt(0).toUpperCase()) || "G";
 
         return (
           <div

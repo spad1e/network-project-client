@@ -10,8 +10,8 @@ export function CreateGroup() {
   // if (!socket.connected) {
   //   connectSocket();
   // }
-  const { showPanel, hidePanel } = useFloatPanel();
-  const { loadGroup, groupMap } = useManage();
+  const { showPanel } = useFloatPanel();
+  const { loadGroup } = useManage();
   const handleSubmit = async (
     inputValue: InputValue<"text">,
   ): Promise<void> => {

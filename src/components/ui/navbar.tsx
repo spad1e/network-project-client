@@ -1,16 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import { Gamepad, Bell, User, LogOut, Users } from "lucide-react";
+import { Gamepad, LogOut, Users } from "lucide-react";
 import { useFloatPanel } from "../context/FloatPanelProvider";
 import { CreateGroup } from "./creategroup";
 import { useManage } from "../context/ManageProvider";
 import { logout } from "@/lib/auth";
-import { useState } from "react";
 
 export function NavBar() {
   const { showPanel } = useFloatPanel();
-  const [drop, setDrop] = useState<boolean>(false);
   const { username } = useManage();
   const router = useRouter();
 

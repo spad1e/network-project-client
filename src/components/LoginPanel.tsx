@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { User, Lock, Loader, Gamepad } from "lucide-react";
 import { signIn } from "@/lib/auth";
-import { useManage } from "./context/ManageProvider";
 
 export function LoginPanel() {
   const router = useRouter();
@@ -22,7 +21,7 @@ export function LoginPanel() {
     setError("");
 
     try {
-      const data = await signIn({ username, password });
+      await signIn({ username, password });
       router.push("/");
     } catch (err) {
       setError("Login failed. Please check your credentials.");

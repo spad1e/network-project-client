@@ -3,3 +3,7 @@ export interface IUser {
   icon_id?: number;
   password: string;
 }
+export interface IUserSignIn {
+  username: string;
+  password: string;
+}

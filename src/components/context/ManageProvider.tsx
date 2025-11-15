@@ -6,8 +6,6 @@ import { getUserByToken, fetchUsers } from "@/lib/user";
 import { usePathname, useRouter } from "next/navigation";
 import { socket } from "@/connections/socket";
 import type { IUser } from "@/types/user";
-import type { ICurrChat } from "@/types/chat";
-import { set } from "zod/v4";
 
 interface ManageContextType {
   onlineUsers: { user: IUser; online: boolean }[];
@@ -18,7 +16,7 @@ interface ManageContextType {
   getGroup: () => IGroup[];
   username: string;
   memUsername: (username: string) => void;
-  setJoinGroup: () => void;
+  setJoinGroup: () => Promise<void>;
 }
 
 const ManageContext = createContext<ManageContextType | undefined>(undefined);
